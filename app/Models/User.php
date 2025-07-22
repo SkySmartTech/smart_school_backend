@@ -19,9 +19,24 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'userId',
+        'userRole',
         'name',
-        'email',
+        'username',
         'password',
+        'userType',
+        'contact',
+        'birthDay',
+        'address',
+        'location',
+        'email',
+        'gender',
+        'photo',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => 'boolean',
     ];
 
     /**

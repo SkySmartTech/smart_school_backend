@@ -13,7 +13,7 @@ class LoginController extends Controller
     {
         $credentials = $request->validated();
 
-        $user = User::where('name', $credentials['name'])->first();
+        $user = User::where('username', $credentials['username'])->first();
 
         // if (!$user->availability) {
         //     return response()->json(['message' => 'Your account is Unavailabile.'], 403);
