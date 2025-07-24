@@ -25,13 +25,6 @@ class UserRepository extends BaseRepository implements UserInterface
 
     public function search(string $keyword): Collection
     {
-        return User::where('employeeName', 'like', "%{$keyword}%")
-                ->orWhere('username', 'like', "%{$keyword}%")
-                ->orWhere('epf', 'like', "%{$keyword}%")
-                ->orWhere('department', 'like', "%{$keyword}%")
-                ->orWhere('email', 'like', "%{$keyword}%")
-                ->orWhere('contact', 'like', "%{$keyword}%")
-                ->orWhere('userType', 'like', "%{$keyword}%")
-                ->get();
+        return User::where();
     }
 }

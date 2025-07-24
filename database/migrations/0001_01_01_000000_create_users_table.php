@@ -23,6 +23,11 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->string('userId')->nullable();
             $table->enum('userType', ['Teacher', 'Parent', 'Student', 'Management Staff'])->nullable();
+            $table->string('grade')->nullable();
+            $table->string('subject')->nullable();
+            $table->string('class')->nullable();
+            $table->string('profession')->nullable();
+            $table->string('parentContact')->nullable();
             $table->string('username')->nullable();
             $table->string('password')->nullable();
             $table->enum('userRole', ['admin','user'])->default('user')->nullable();
