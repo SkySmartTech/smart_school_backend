@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\UserRegisterController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\UserAccess\UserAccessController;
 use App\Http\Controllers\UserRole\UserRoleController;
 use App\Http\Controllers\UserType\UserTypeController;
 use Illuminate\Support\Facades\Route;
@@ -12,11 +13,14 @@ Route::post('login', [LoginController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
+
     Route::get('user', [UserController::class, 'show']);
     Route::post('add-new-user', [UserController::class, 'store']);
     Route::get('all-users', [UserController::class, 'index']);
     Route::post('user/{id}/profile-update', [UserController::class, 'profileUpdate']);
     Route::post('user/{id}/update', [UserController::class, 'update']);
+    Route::post('user/{id}/status-update', [UserController::class, 'updateStatus']);
+    Route::post('user/search', [UserController::class, 'search']);
 
     Route::post('add-new-user-role', [UserRoleController::class, 'store']);
     Route::get('user-roles', [UserRoleController::class, 'index']);
@@ -29,5 +33,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user-type/{id}', [UserTypeController::class, 'show']);
     Route::post('update-user-type/{id}', [UserTypeController::class, 'update']);
     Route::delete('delete-user-type/{id}', [UserTypeController::class, 'destroy']);
+
+    Route::post('user-access-create', [UserAccessController::class, 'store']);
+    Route::get('user-accesses', [UserAccessController::class, 'index']);
+    Route::get('user-access/{id}/show', [UserAccessController::class, 'show']);
+    Route::post('user-access/{id}/update', [UserAccessController::class, 'update']);
+    Route::delete('user-access/{id}/delete', [UserAccessController::class, 'destroy']);
 
 });
