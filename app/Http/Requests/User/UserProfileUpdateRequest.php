@@ -11,7 +11,7 @@ class UserProfileUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class UserProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|max:255|unique:users,email',
+            'address'   => 'nullable|string|max:255',
+            'birthDay'  => 'nullable|date',
+            'contact'   => 'nullable|string|max:255',
+            'medium'    => 'nullable|string|max:255',
+            'gender'    => 'nullable|string|max:255',
+            'grade'     => 'nullable|string|max:255',
+            'subject'   => 'nullable|string|max:255',
+            'class'     => 'nullable|string|max:255',
+            'profession'=> 'nullable|string|max:255',
         ];
     }
 }
