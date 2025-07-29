@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserType extends Model
+class Medium extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'userType',
+        'mediumId',
+        'medium',
         'description',
-        'userId',
     ];
 }

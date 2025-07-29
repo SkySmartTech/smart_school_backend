@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserType extends Model
+class GradeClass extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'userType',
+        'classId',
+        'class',
         'description',
-        'userId',
+        'gradeId',
     ];
 }

@@ -15,15 +15,15 @@ class LoginController extends Controller
 
         $user = User::where('username', $credentials['username'])->first();
 
-        // if (!$user->availability) {
-        //     return response()->json(['message' => 'Your account is Unavailabile.'], 403);
-        // }
+        if (!$user->status) {
+            return response()->json(['message' => 'Your account is Unavailabile.'], 403);
+        }
 
-        // if (!$user || !Hash::check($credentials['password'], $user->password)) {
-        //     return response()->json([
-        //         'message' => 'Invalid credentials!',
-        //     ], 401);
-        // }
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Invalid credentials!',
+            ], 401);
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

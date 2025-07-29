@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_types', function (Blueprint $table) {
+        Schema::create('subjects', function (Blueprint $table) {
             $table->id();
-            $table->string('userType')->nullable();
+            $table->string('subjectId')->nullable();
+            $table->string('subjectName')->nullable();
             $table->text('description')->nullable();
-            $table->string('userId')->nullable();
+            $table->string('medium');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_types');
+        Schema::dropIfExists('subjects');
     }
 };
