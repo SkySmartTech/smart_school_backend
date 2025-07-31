@@ -14,24 +14,17 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->string('email')->unique()->nullable();
             $table->string('address')->nullable();
+            $table->string('email')->unique()->nullable();
             $table->date('birthDay')->nullable();
             $table->string('contact')->nullable();
-            $table->string('medium')->nullable();
+            $table->enum('userType', ['Teacher', 'Parent', 'Student'])->nullable();
             $table->string('gender')->nullable();
-            $table->string('photo')->nullable();
-            $table->string('userId')->nullable();
-            $table->enum('userType', ['Teacher', 'Parent', 'Student', 'Management Staff'])->nullable();
-            $table->string('grade')->nullable();
-            $table->string('subject')->nullable();
-            $table->string('class')->nullable();
-            $table->string('profession')->nullable();
-            $table->string('parentContact')->nullable();
+            $table->string('location')->nullable();
             $table->string('username')->nullable();
             $table->string('password')->nullable();
+            $table->string('photo')->nullable();
             $table->enum('userRole', ['admin','user'])->default('user')->nullable();
-            $table->string('location')->nullable();
             $table->boolean('status')->default(false)->nullable();
             $table->timestamps();
         });

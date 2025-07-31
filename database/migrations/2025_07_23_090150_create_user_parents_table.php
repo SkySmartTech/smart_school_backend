@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('user_parents', function (Blueprint $table) {
             $table->id();
-            $table->string('userType')->nullable();
             $table->string('studentAdmissionNo')->nullable();
-            $table->string('parentContact')->nullable();
             $table->string('profession')->nullable();
             $table->enum('relation', ['father', 'mother', 'guardian'])->nullable();
             $table->string('userId')->nullable();
+            $table->string('userType')->nullable();
             $table->timestamps();
         });
     }

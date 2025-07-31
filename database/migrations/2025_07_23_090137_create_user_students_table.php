@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('user_students', function (Blueprint $table) {
             $table->id();
-            $table->string('userType')->nullable();
             $table->string('studentGrade')->nullable();
             $table->enum('medium', ['english', 'sinhala', 'tamil'])->nullable();
             $table->string('studentClass')->nullable();
+            $table->string('studentAdmissionNo')->nullable();
             $table->string('parentNo')->nullable();
             $table->string('parentProfession')->nullable();
+            $table->string('userType')->nullable();
+            $table->string('userId')->nullable();
             $table->enum('userRole', ['admin', 'user'])->default('user')->nullable();
             $table->string('modifiedBy')->nullable();
-            $table->string('studentAdmissionNo')->nullable();
-            $table->string('userId')->nullable();
             $table->timestamps();
         });
     }
