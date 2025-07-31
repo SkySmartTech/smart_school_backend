@@ -26,7 +26,7 @@ class UserTeacherRegisterRequest extends FormRequest
             'teacherClass' => 'required|array',
             'subjects' => 'required|array',
             'staffNo' => 'required|string|max:255',
-            'medium' => 'required|array',
+            'medium' => 'required|array'
         ];
     }
 }
