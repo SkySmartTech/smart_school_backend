@@ -9,14 +9,22 @@ use App\Http\Controllers\Relation\RelationController;
 use App\Http\Controllers\School\SchoolController;
 use App\Http\Controllers\Subject\SubjectController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\UserParentController;
+use App\Http\Controllers\User\UserStudentController;
+use App\Http\Controllers\User\UserTeacherController;
 use App\Http\Controllers\UserAccess\UserAccessController;
 use App\Http\Controllers\UserRole\UserRoleController;
 use App\Http\Controllers\UserType\UserTypeController;
+use App\Http\Controllers\UserTypeRegister\UserTypeRegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user-register', [UserRegisterController::class, 'store']);
-Route::post('login', [LoginController::class, 'login']);
+//Route::post('user-type-register', [UserTypeRegisterController::class, 'store']);
+Route::post('user-teacher-register', [UserTeacherController::class, 'store']);
+Route::post('user-student-register', [UserStudentController::class, 'store']);
+Route::post('user-parent-register', [UserParentController::class, 'store']);
 
+Route::post('login', [LoginController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
 

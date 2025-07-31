@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UserRegisterRequest;
 use App\Repositories\All\User\UserInterface;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 
 class UserRegisterController extends Controller
@@ -22,10 +22,12 @@ class UserRegisterController extends Controller
         $validated = $request->validated();
         $validated['password'] = Hash::make($validated['password']);
 
-        $this->userInterface->create($validated);
+        $user = $this->userInterface->create($validated);
 
         return response()->json([
             'message' => 'User registered successfully!',
+            'userId'    => $user->id,
+            'userType'  => $user->userType ?? null,
         ], 201);
     }
 }

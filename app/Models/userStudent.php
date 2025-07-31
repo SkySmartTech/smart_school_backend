@@ -10,15 +10,15 @@ class UserStudent extends Model
     use HasFactory;
 
     protected $fillable = [
-        'userType',
         'studentGrade',
         'medium',
         'studentClass',
+        'studentAdmissionNo',
         'parentNo',
         'parentProfession',
-        'userRole',
-        'modifiedBy',
-        'studentAdmissionNo',
+        'userType',
         'userId',
+        'userRole',
+        'modifiedBy'
     ];
 }
