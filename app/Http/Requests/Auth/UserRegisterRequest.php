@@ -33,8 +33,6 @@ class UserRegisterRequest extends FormRequest
             'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:4|confirmed',
             'photo' => 'nullable|string|max:255',
-            'userRole' => 'nullable|string|max:255',
-            'status' => 'nullable|boolean',
         ];
     }
 }
