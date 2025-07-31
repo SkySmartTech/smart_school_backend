@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('user_teachers', function (Blueprint $table) {
             $table->id();
-            $table->string('userType')->nullable();
             $table->json('teacherGrades')->nullable();
-            $table->string('teacherClass')->nullable();
+            $table->json('teacherClass')->nullable();
             $table->json('subjects')->nullable();
-            $table->string('modifiedBy')->nullable();
-            $table->enum('userRole', ['admin', 'user'])->default('user')->nullable();
-            $table->enum('medium', ['english', 'sinhala', 'tamil'])->nullable();
             $table->string('staffNo')->nullable();
+            $table->json('medium')->nullable();
             $table->string('userId')->nullable();
+            $table->string('userType')->nullable();
+            $table->enum('userRole', ['admin', 'user'])->default('user')->nullable();
+            $table->string('modifiedBy')->nullable();
             $table->timestamps();
         });
     }

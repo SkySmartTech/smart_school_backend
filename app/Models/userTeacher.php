@@ -10,19 +10,21 @@ class UserTeacher extends Model
     use HasFactory;
 
     protected $fillable = [
-        'userType',
         'teacherGrades',
-        'teacherClass',
         'subjects',
-        'modifiedBy',
-        'userRole',
-        'medium',
+        'teacherClass',
         'staffNo',
+        'medium',
         'userId',
+        'userType',
+        'userRole',
+        'modifiedBy'
     ];
 
     protected $casts = [
         'teacherGrades' => 'array',
+        'teacherClass' => 'array',
         'subjects' => 'array',
+        'medium' => 'array',
     ];
 }
