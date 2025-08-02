@@ -29,11 +29,13 @@ Route::post('login', [LoginController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('user', [UserController::class, 'show']);
+    Route::post('user/{id}/profile-update', [UserController::class, 'profileUpdate']);
+
     Route::post('add-new-user', [UserController::class, 'store']);
     Route::get('all-users', [UserController::class, 'index']);
-    Route::post('user/{id}/profile-update', [UserController::class, 'profileUpdate']);
     Route::post('user/{id}/update', [UserController::class, 'update']);
     Route::post('user/{id}/status-update', [UserController::class, 'updateStatus']);
+    
     Route::post('user/search', [UserController::class, 'search']);
 
     Route::post('add-new-user-role', [UserRoleController::class, 'store']);

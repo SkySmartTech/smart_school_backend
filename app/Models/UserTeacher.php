@@ -27,4 +27,9 @@ class UserTeacher extends Model
         'subjects' => 'array',
         'medium' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
