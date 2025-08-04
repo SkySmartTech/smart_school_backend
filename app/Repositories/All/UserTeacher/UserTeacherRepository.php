@@ -21,4 +21,9 @@ class UserTeacherRepository extends BaseRepository implements UserTeacherInterfa
     {
         $this->model = $model;
     }
+
+    public function updateByUserId($userId, $data)
+    {
+        return UserTeacher::where('userId', $userId)->update($data);
+    }
 }
