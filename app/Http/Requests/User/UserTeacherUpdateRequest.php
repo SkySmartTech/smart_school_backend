@@ -32,7 +32,8 @@ class UserTeacherUpdateRequest extends FormRequest
             'location' => 'nullable|string|max:255',
             'username' => 'nullable|string|max:255',
             'photo' => 'nullable|string|max:255',
-
+            'userRole' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
             'teacherGrades' => 'nullable|array',
             'teacherClass' => 'nullable|array',
             'subjects' => 'nullable|array',

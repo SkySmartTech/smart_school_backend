@@ -33,7 +33,8 @@ class UserTeacherCreateRequest extends FormRequest
             'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:8',
             'photo' => 'nullable|string|max:255',
-
+            'userRole' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
             'teacherGrades' => 'nullable|array',
             'teacherClass' => 'nullable|array',
             'subjects' => 'nullable|array',

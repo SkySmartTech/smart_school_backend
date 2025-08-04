@@ -21,4 +21,9 @@ class UserStudentRepository extends BaseRepository implements UserStudentInterfa
     {
         $this->model = $model;
     }
+
+    public function updateByUserId($userId, $data)
+    {
+        return UserStudent::where('userId', $userId)->update($data);
+    }
 }

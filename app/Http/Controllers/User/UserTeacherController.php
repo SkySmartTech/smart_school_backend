@@ -7,6 +7,7 @@ use App\Http\Requests\User\UserTeacherCreateRequest;
 use App\Http\Requests\User\UserTeacherUpdateRequest;
 use App\Http\Requests\UserTypeRegister\UserTeacherRegisterRequest;
 use App\Models\User;
+use App\Models\UserTeacher;
 use App\Repositories\All\User\UserInterface;
 use App\Repositories\All\UserTeacher\UserTeacherInterface;
 use Illuminate\Http\Request;
@@ -65,6 +66,8 @@ class UserTeacherController extends Controller
             'username'  => $validatedData['username'],
             'password'  => $validatedData['password'],
             'photo'     => $validatedData['photo'],
+            'userRole'  => $validatedData['userRole'],
+            'status'    => $validatedData['status'], // Default to true if not provided
         ];
 
         $user = $this->userInterface->create($userData);
@@ -112,13 +115,16 @@ class UserTeacherController extends Controller
             'gender'    => $validatedData['gender'],
             'location'  => $validatedData['location'],
             'username'  => $validatedData['username'],
-            //'password'  => $validatedData['password'],
             'photo'     => $validatedData['photo'],
+            'userRole'  => $validatedData['userRole'],
+            'status'    => $validatedData['status'],
         ];
 
         $this->userInterface->update($id, $userData);
-        
+
+
         $teacherData = [
+            'userType'      => $validatedData['userType'],
             'teacherGrades' => $validatedData['teacherGrades'],
             'teacherClass'  => $validatedData['teacherClass'],
             'subjects'      => $validatedData['subjects'],
@@ -127,10 +133,22 @@ class UserTeacherController extends Controller
             'modifiedBy'    => Auth::user()->name,
         ];
 
-        $this->userTeacherInterface->update($id, $teacherData);
+        $this->userTeacherInterface->updateByUserId($id, $teacherData);
 
         return response()->json([
             'message' => 'User Teacher updated successfully!',
         ], 200);
+    }
+
+    public function updateStatus($id)
+    {
+        $user = $this->userInterface->findById($id);
+
+        $user->status = false;
+        $user->save();
+
+        return response()->json([
+            'message' => 'User deactivated successfully.',
+        ]);
     }
 }

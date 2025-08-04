@@ -84,17 +84,6 @@ class UserController extends Controller
         ]);
     }
 
-    public function updateStatus($id)
-    {
-        $user = $this->userInterface->findById($id);
-
-        $user->status = false;
-        $user->save();
-
-        return response()->json([
-            'message' => 'User deactivated successfully.',
-        ]);
-    }
 
     public function index()
     {
@@ -113,7 +102,7 @@ class UserController extends Controller
         $user = $this->userInterface->update($id, $commonData);
 
         $user = User::find($id);
-        
+
         switch (strtolower($user->userType)) {
             case 'teacher':
                 $teacherData = $teacherRequest->validated();

@@ -11,7 +11,7 @@ class UserStudentCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,25 @@ class UserStudentCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:users,email|max:255',
+            'birthDay' => 'nullable|date',
+            'contact' => 'nullable|string|max:15',
+            'userType' => 'required|string|max:255',
+            'gender' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
+            'password' => 'required|string|min:8',
+            'photo' => 'nullable|string|max:255',
+            'userRole' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
+            'studentGrade' => 'required|string|max:255',
+            'medium' => 'nullable|string|max:255',
+            'studentClass' => 'nullable|string|max:255',
+            'studentAdmissionNo' => 'nullable|string|max:255',
+            'parentNo' => 'nullable|string|max:255',
+            'parentProfession' => 'nullable|string|max:255',
         ];
     }
 }
