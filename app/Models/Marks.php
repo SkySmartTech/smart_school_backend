@@ -15,7 +15,9 @@ class Marks extends Model
         'studentGrade',
         'studentClass',
         'term',
+        'month',
         'subject',
+        'medium',
         'marks',
         'marksGrade',
     ];

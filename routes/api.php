@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\UserRegisterController;
 use App\Http\Controllers\Grade\GradeController;
 use App\Http\Controllers\GradeClass\GradeClassController;
+use App\Http\Controllers\Marks\MarksController;
 use App\Http\Controllers\Medium\MediumController;
 use App\Http\Controllers\Relation\RelationController;
 use App\Http\Controllers\School\SchoolController;
@@ -101,4 +102,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('grade-class/{id}/show', [GradeClassController::class, 'show']);
     Route::post('grade-class/{id}/update', [GradeClassController::class, 'update']);
     Route::delete('grade-class/{id}/delete', [GradeClassController::class, 'destroy']);
+
+    Route::post('student-admission-data', [UserStudentController::class, 'showAdmissionData']);
+    Route::get('search-admission-data', [UserStudentController::class, 'searchAdmissionData']);
+    Route::post('add-marks', [MarksController::class, 'store']);
+    Route::post('calculate-grade', [MarksController::class, 'calculateGradeApi']);
+
 });

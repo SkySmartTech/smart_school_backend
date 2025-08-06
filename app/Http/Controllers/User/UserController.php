@@ -13,20 +13,24 @@ use App\Models\User;
 use App\Models\UserParent;
 use App\Repositories\All\User\UserInterface;
 use App\Repositories\All\UserAccess\UserAccessInterface;
+use App\Repositories\All\UserStudent\UserStudentInterface;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     protected $userInterface;
     protected $userAccessInterface;
+    protected $userStudentInterface;
 
     public function __construct(
         UserInterface $userInterface,
-        UserAccessInterface $userAccessInterface
+        UserAccessInterface $userAccessInterface,
+        UserStudentInterface $userStudentInterface
         )
     {
         $this->userInterface = $userInterface;
         $this->userAccessInterface = $userAccessInterface;
+        $this->userStudentInterface = $userStudentInterface;
     }
 
     public function show(Request $request)
@@ -132,6 +136,7 @@ class UserController extends Controller
         $keyword = $request->input('keyword');
 
         $users = $this->userInterface->search($keyword);
+        $admissions = $this->userStudentInterface->search($keyword);
 
         $userData = $users->map(function ($user) {
             $userArray = $user->toArray();
@@ -139,6 +144,16 @@ class UserController extends Controller
             return $userArray;
         });
 
-        return response()->json($userData, 200);
+
+        $admissionData = $admissions->map(function ($user) {
+            $userArray = $user->toArray();
+
+            return $userArray;
+        });
+
+        return response()->json([
+            'users' => $userData,
+            'admissions' => $admissionData,
+        ], 200);
     }
 }
