@@ -122,11 +122,12 @@ class UserStudentController extends Controller
 
         $teacherData = [
             'userType'      => $validatedData['userType'],
-            'teacherGrades' => $validatedData['teacherGrades'],
-            'teacherClass'  => $validatedData['teacherClass'],
-            'subjects'      => $validatedData['subjects'],
-            'staffNo'       => $validatedData['staffNo'],
-            'medium'        => $validatedData['medium'],
+            'studentGrade' => $validatedData['studentGrade'],
+            'medium'  => $validatedData['medium'],
+            'studentClass'      => $validatedData['studentClass'],
+            'studentAdmissionNo'       => $validatedData['studentAdmissionNo'],
+            'parentNo'        => $validatedData['parentNo'],
+            'parentProfession' => $validatedData['parentProfession'],
             'modifiedBy'    => Auth::user()->name,
         ];
 
