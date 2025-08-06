@@ -11,7 +11,7 @@ class UserParentUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,21 @@ class UserParentUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'email' => 'required|email',
+            'birthDay' => 'nullable|date',
+            'contact' => 'nullable|string|max:15',
+            'userType' => 'required|string|max:255',
+            'gender' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'username' => 'required|string|max:255',
+            'photo' => 'nullable|string|max:255',
+            'userRole' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
+            'studentAdmissionNo' => 'nullable|string|max:255',
+            'profession' => 'nullable|string|max:255',
+            'relation' => 'nullable|string|max:255'
         ];
     }
 }
