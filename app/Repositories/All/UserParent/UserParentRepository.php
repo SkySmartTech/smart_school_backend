@@ -21,4 +21,9 @@ class UserParentRepository extends BaseRepository implements UserParentInterface
     {
         $this->model = $model;
     }
+
+    public function updateByUserId($userId, $data)
+    {
+        return UserParent::where('userId', $userId)->update($data);
+    }
 }

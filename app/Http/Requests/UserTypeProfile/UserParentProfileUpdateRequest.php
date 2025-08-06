@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\UserTypeRegister;
+namespace App\Http\Requests\UserTypeProfile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserStudentRegisterRequest extends FormRequest
+class UserParentProfileUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,9 @@ class UserStudentRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'studentGrade' => 'required|string|max:255',
-            'medium' => 'nullable|string|max:255',
-            'studentClass' => 'nullable|string|max:255',
             'studentAdmissionNo' => 'nullable|string|max:255',
-            'parentNo' => 'nullable|string|max:255',
-            'parentProfession' => 'nullable|string|max:255',
+            'profession' => 'nullable|string|max:255',
+            'relation' => 'nullable|string|max:255'
         ];
     }
 }

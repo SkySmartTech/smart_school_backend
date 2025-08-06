@@ -60,4 +60,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function teacher()
+    {
+        return $this->hasOne(UserTeacher::class, 'userId', 'id');
+    }
+
+    public function student()
+    {
+        return $this->hasOne(UserStudent::class, 'userId', 'id');
+    }
+
+    public function parent()
+    {
+        return $this->hasOne(UserParent::class, 'userId', 'id');
+    }
 }

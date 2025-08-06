@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\UserRegisterController;
 use App\Http\Controllers\Grade\GradeController;
 use App\Http\Controllers\GradeClass\GradeClassController;
+use App\Http\Controllers\Marks\MarksController;
 use App\Http\Controllers\Medium\MediumController;
 use App\Http\Controllers\Relation\RelationController;
 use App\Http\Controllers\School\SchoolController;
@@ -19,7 +21,6 @@ use App\Http\Controllers\UserTypeRegister\UserTypeRegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user-register', [UserRegisterController::class, 'store']);
-//Route::post('user-type-register', [UserTypeRegisterController::class, 'store']);
 Route::post('user-teacher-register', [UserTeacherController::class, 'store']);
 Route::post('user-student-register', [UserStudentController::class, 'store']);
 Route::post('user-parent-register', [UserParentController::class, 'store']);
@@ -27,14 +28,26 @@ Route::post('user-parent-register', [UserParentController::class, 'store']);
 Route::post('login', [LoginController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [LogoutController::class, 'logout']);
 
     Route::get('user', [UserController::class, 'show']);
-    Route::post('add-new-user', [UserController::class, 'store']);
-    Route::get('all-users', [UserController::class, 'index']);
     Route::post('user/{id}/profile-update', [UserController::class, 'profileUpdate']);
-    Route::post('user/{id}/update', [UserController::class, 'update']);
-    Route::post('user/{id}/status-update', [UserController::class, 'updateStatus']);
     Route::post('user/search', [UserController::class, 'search']);
+
+    Route::post('add-new-teacher', [UserTeacherController::class, 'create']);
+    Route::get('all-teachers', [UserTeacherController::class, 'showTeachers']);
+    Route::post('user-teacher/{id}/update', [UserTeacherController::class, 'update']);
+    Route::post('user-teacher/{id}/status-update', [UserTeacherController::class, 'updateStatus']);
+
+    Route::post('add-new-student', [UserStudentController::class, 'create']);
+    Route::get('all-students', [UserStudentController::class, 'showStudents']);
+    Route::post('user-student/{id}/update', [UserStudentController::class, 'update']);
+    Route::post('user-student/{id}/status-update', [UserStudentController::class, 'updateStatus']);
+
+    Route::post('add-new-parent', [UserParentController::class, 'create']);
+    Route::get('all-parents', [UserParentController::class, 'showParents']);
+    Route::post('user-parent/{id}/update', [UserParentController::class, 'update']);
+    Route::post('user-parent/{id}/status-update', [UserParentController::class, 'updateStatus']);
 
     Route::post('add-new-user-role', [UserRoleController::class, 'store']);
     Route::get('user-roles', [UserRoleController::class, 'index']);
@@ -89,4 +102,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('grade-class/{id}/show', [GradeClassController::class, 'show']);
     Route::post('grade-class/{id}/update', [GradeClassController::class, 'update']);
     Route::delete('grade-class/{id}/delete', [GradeClassController::class, 'destroy']);
+
+    Route::post('student-admission-data', [UserStudentController::class, 'showAdmissionData']);
+    Route::get('search-admission-data', [UserStudentController::class, 'searchAdmissionData']);
+    Route::post('add-marks', [MarksController::class, 'store']);
+    Route::post('calculate-grade', [MarksController::class, 'calculateGradeApi']);
+
 });
