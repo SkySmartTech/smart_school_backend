@@ -7,6 +7,8 @@ use App\Repositories\All\Grade\GradeInterface;
 use App\Repositories\All\Grade\GradeRepository;
 use App\Repositories\All\GradeClass\GradeClassInterface;
 use App\Repositories\All\GradeClass\GradeClassRepository;
+use App\Repositories\All\Marks\MarksInterface;
+use App\Repositories\All\Marks\MarksRepository;
 use App\Repositories\All\Medium\MediumInterface;
 use App\Repositories\All\Medium\MediumRepository;
 use App\Repositories\All\Relation\RelationInterface;
@@ -59,5 +61,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserTeacherInterface::class, UserTeacherRepository::class);
         $this->app->bind(UserStudentInterface::class, UserStudentRepository::class);
         $this->app->bind(UserParentInterface::class, UserParentRepository::class);
+        $this->app->bind(MarksInterface::class, MarksRepository::class);
     }
 }

@@ -148,4 +148,69 @@ class UserStudentController extends Controller
             'message' => 'User deactivated successfully.',
         ]);
     }
+
+    public function showAdmissionData(Request $request)
+    {
+        $grade = $request->input('grade');
+        $class = $request->input('class');
+
+        $admissionData = User::where('userType', 'student')
+            ->whereHas('student', function ($query) use ($grade, $class) {
+                $query->where('studentGrade', $grade)
+                    ->where('studentClass', $class);
+            })
+            ->with(['student' => function ($query) {
+                $query->select('userId', 'studentAdmissionNo'); // ensure only necessary fields
+            }])
+            ->select('id', 'name') // only id (for relation) and name
+            ->get();
+
+        $transformed = $admissionData->map(function ($user) {
+            return [
+                'name' => $user->name,
+                'studentAdmissionNo' => $user->student->studentAdmissionNo ?? null,
+            ];
+        });
+
+        return response()->json($transformed, 200);
+    }
+
+    public function searchAdmissionData(Request $request)
+    {
+        $grade = $request->input('grade');
+        $class = $request->input('class');
+        $keyword = $request->input('keyword');
+
+        $admissionData = User::where('userType', 'student')
+            ->whereHas('student', function ($query) use ($grade, $class) {
+                $query->where('studentGrade', $grade)
+                    ->where('studentClass', $class);
+            })
+            ->with(['student' => function ($query) {
+                $query->select('userId', 'studentAdmissionNo');
+            }])
+            ->select('id', 'name')
+            ->get();
+
+        // Transform to only required fields
+        $transformed = $admissionData->map(function ($user) {
+            return [
+                'name' => $user->name,
+                'studentAdmissionNo' => $user->student->studentAdmissionNo ?? null,
+            ];
+        });
+
+        // Filter based on keyword
+        if ($keyword) {
+            $transformed = $transformed->filter(function ($item) use ($keyword) {
+                return str_contains(strtolower($item['name']), strtolower($keyword)) ||
+                    str_contains(strtolower($item['studentAdmissionNo']), strtolower($keyword));
+            })->values(); // Reset index after filtering
+        }
+
+        return response()->json($transformed, 200);
+    }
+
+
+
 }
