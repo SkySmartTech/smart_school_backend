@@ -21,4 +21,14 @@ class Marks extends Model
         'marks',
         'marksGrade',
     ];
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(UserStudent::class);
+    }
 }

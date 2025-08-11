@@ -21,4 +21,9 @@ class UserStudent extends Model
         'userRole',
         'modifiedBy'
     ];
+
+    public function parent()
+    {
+        return $this->hasOne(UserParent::class, 'studentAdmissionNo', 'studentAdmissionNo');
+    }
 }
