@@ -73,7 +73,18 @@ class MarksController extends Controller
             ->groupBy('subject')
             ->get();
 
-        // Class-wise breakdown
+        $totalAverageSum = $subjectAverages->sum('average_marks');
+        $subjectAveragesWithPercent = $subjectAverages->map(function ($item) use ($totalAverageSum) {
+            $percentage = $totalAverageSum > 0
+                ? round(($item->average_marks / $totalAverageSum) * 100, 2)
+                : 0;
+            return [
+                'subject' => $item->subject,
+                'average_marks' => $item->average_marks,
+                'percentage' => $percentage
+            ];
+        });
+
         $classMarks = DB::table('marks')
             ->whereYear('created_at', $year)
             ->where('studentGrade', $grade)
@@ -93,7 +104,7 @@ class MarksController extends Controller
 
 
         return response()->json([
-            'subject_marks' => $subjectAverages,
+            'subject_marks' => $subjectAveragesWithPercent,
             'class_subject_marks' => $classMarks,
         ], 201);
     }
@@ -113,6 +124,19 @@ class MarksController extends Controller
             ->select('subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
             ->groupBy('subject')
             ->get();
+
+            
+        $totalAverageSum = $subjectAverages->sum('average_marks');
+        $subjectAveragesWithPercent = $subjectAverages->map(function ($item) use ($totalAverageSum) {
+            $percentage = $totalAverageSum > 0
+                ? round(($item->average_marks / $totalAverageSum) * 100, 2)
+                : 0;
+            return [
+                'subject' => $item->subject,
+                'average_marks' => $item->average_marks,
+                'percentage' => $percentage
+            ];
+        });
 
         $studentMarks = DB::table('marks')
             ->whereYear('created_at', $year)
@@ -149,7 +173,7 @@ class MarksController extends Controller
             });
 
         return response()->json([
-            'subject_marks' => $subjectAverages,
+            'subject_marks' => $subjectAveragesWithPercent,
             'student_marks' => $studentMarks,
         ], 201);
     }
