@@ -108,4 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('add-marks', [MarksController::class, 'store']);
     Route::post('calculate-grade', [MarksController::class, 'calculateGradeApi']);
 
+    Route::get('management-staff-report', [MarksController::class, 'managementStaffReportData']);
+    Route::get('teacher-report-data', [MarksController::class, 'teacherReportData']);
+
 });
