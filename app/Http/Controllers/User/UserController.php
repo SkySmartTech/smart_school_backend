@@ -54,8 +54,20 @@ class UserController extends Controller
                 break;
 
             case 'parent':
-                $parentData = $user->parent;
-                $userData['parent_data'] = $parentData;
+                $parentData = $user->parent()->with('student')->first();
+
+                if ($parentData && $parentData->student) {
+                    $userData['parent_data'] = [
+                        'parent_info' => $parentData,
+                        'student_info' => [
+                            'name'  => $parentData->student->user->name ?? null, // if linked to User
+                            'grade' => $parentData->student->studentGrade,
+                            'class' => $parentData->student->studentClass,
+                        ]
+                    ];
+                } else {
+                    $userData['parent_data'] = null;
+                }
                 break;
 
             default:

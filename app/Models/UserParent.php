@@ -17,4 +17,10 @@ class UserParent extends Model
         'userId',
         'userType',
     ];
+
+    public function student()
+    {
+        return $this->hasOne(UserStudent::class, 'studentAdmissionNo', 'studentAdmissionNo');
+    }
+
 }
