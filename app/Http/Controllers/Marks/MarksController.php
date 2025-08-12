@@ -31,9 +31,8 @@ class MarksController extends Controller
         ], 201);
     }
 
-    public function calculateGradeApi(Request $request)
+    public function calculateGradeApi($marks)
     {
-        $marks = $request->input('marks');
         $grade = $this->calculateGrade($marks);
 
         return response()->json([
@@ -59,12 +58,8 @@ class MarksController extends Controller
         }
     }
 
-    public function managementStaffReportData(Request $request)
+    public function managementStaffReportData($year, $grade, $exam)
     {
-        $year = $request->input('year');
-        $grade = $request->input('grade');
-        $exam = $request->input('exam');
-
         $subjectAverages = DB::table('marks')
             ->whereYear('created_at', $year)
             ->where('studentGrade', $grade)
@@ -113,17 +108,11 @@ class MarksController extends Controller
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
             'class_subject_marks' => $classMarks,
-        ], 201);
+        ], 200);
     }
 
-    public function teacherReportData(Request $request)
+    public function teacherReportData($startDate, $endDate, $grade, $class, $exam)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $grade = $request->input('grade');
-        $class = $request->input('class');
-        $exam = $request->input('exam');
-
         $subjectAverages = DB::table('marks')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->where('studentGrade', $grade)
@@ -187,7 +176,7 @@ class MarksController extends Controller
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
             'student_marks' => $studentMarks,
-        ], 201);
+        ], 200);
     }
 
 }
