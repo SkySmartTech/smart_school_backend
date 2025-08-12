@@ -94,10 +94,17 @@ class MarksController extends Controller
             ->get()
             ->groupBy('studentClass') // Group by class in PHP
             ->map(function ($items) {
-                return $items->map(function ($item) {
+                $totalAverageSum = $items->sum('average_marks');
+
+                return $items->map(function ($item) use ($totalAverageSum) {
+                    $subjectPercentage = $totalAverageSum > 0
+                        ? round(($item->average_marks / $totalAverageSum) * 100, 2)
+                        : 0;
+
                     return [
                         'subject' => $item->subject,
-                        'average_mark' => $item->average_marks
+                        'average_mark' => $item->average_marks,
+                        'subject_percentage' => $subjectPercentage // Add percentage
                     ];
                 });
             });
@@ -111,13 +118,14 @@ class MarksController extends Controller
 
     public function teacherReportData(Request $request)
     {
-        $year = $request->input('year');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $grade = $request->input('grade');
         $class = $request->input('class');
         $exam = $request->input('exam');
 
         $subjectAverages = DB::table('marks')
-            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->where('studentClass', $class)
@@ -125,7 +133,7 @@ class MarksController extends Controller
             ->groupBy('subject')
             ->get();
 
-            
+
         $totalAverageSum = $subjectAverages->sum('average_marks');
         $subjectAveragesWithPercent = $subjectAverages->map(function ($item) use ($totalAverageSum) {
             $percentage = $totalAverageSum > 0
@@ -139,7 +147,7 @@ class MarksController extends Controller
         });
 
         $studentMarks = DB::table('marks')
-            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->where('studentClass', $class)
@@ -154,6 +162,9 @@ class MarksController extends Controller
             ->groupBy('studentName')
             ->map(function ($items, $studentName) {
                 $totalMarks = $items->sum('marks');
+                $subjectCount = $items->count();
+                $averageMarks = $subjectCount > 0 ? round($totalMarks / $subjectCount, 2) : 0;
+
                 return [
                     'studentName' => $studentName,
                     'subjects' => $items->map(function ($item) {
@@ -163,6 +174,7 @@ class MarksController extends Controller
                         ];
                     })->values(),
                     'total_marks' => $totalMarks,
+                    'average_marks' => $averageMarks
                 ];
             })
             ->sortByDesc('total_marks') // Sort from highest to lowest

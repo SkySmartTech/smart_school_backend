@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('user', [UserController::class, 'show']);
     Route::post('user/{id}/profile-update', [UserController::class, 'profileUpdate']);
-    Route::post('user/search', [UserController::class, 'search']);
+    Route::get('user/search', [UserController::class, 'search']);
 
     Route::post('add-new-teacher', [UserTeacherController::class, 'create']);
     Route::get('all-teachers', [UserTeacherController::class, 'showTeachers']);
@@ -103,10 +103,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('grade-class/{id}/update', [GradeClassController::class, 'update']);
     Route::delete('grade-class/{id}/delete', [GradeClassController::class, 'destroy']);
 
-    Route::post('student-admission-data', [UserStudentController::class, 'showAdmissionData']);
+    Route::get('student-admission-data', [UserStudentController::class, 'showAdmissionData']);
     Route::get('search-admission-data', [UserStudentController::class, 'searchAdmissionData']);
     Route::post('add-marks', [MarksController::class, 'store']);
-    Route::post('calculate-grade', [MarksController::class, 'calculateGradeApi']);
+    Route::get('calculate-grade', [MarksController::class, 'calculateGradeApi']);
 
     Route::get('management-staff-report', [MarksController::class, 'managementStaffReportData']);
     Route::get('teacher-report-data', [MarksController::class, 'teacherReportData']);
