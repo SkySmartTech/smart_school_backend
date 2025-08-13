@@ -150,11 +150,8 @@ class UserStudentController extends Controller
         ]);
     }
 
-    public function showAdmissionData(Request $request)
+    public function showAdmissionData($grade, $class)
     {
-        $grade = $request->input('grade');
-        $class = $request->input('class');
-
         $admissionData = User::where('userType', 'student')
             ->whereHas('student', function ($query) use ($grade, $class) {
                 $query->where('studentGrade', $grade)
@@ -176,10 +173,8 @@ class UserStudentController extends Controller
         return response()->json($transformed, 200);
     }
 
-    public function searchAdmissionData(Request $request)
+    public function searchAdmissionData($grade, $class, Request $request)
     {
-        $grade = $request->input('grade');
-        $class = $request->input('class');
         $keyword = $request->input('keyword');
 
         $admissionData = User::where('userType', 'student')
@@ -193,7 +188,6 @@ class UserStudentController extends Controller
             ->select('id', 'name')
             ->get();
 
-        // Transform to only required fields
         $transformed = $admissionData->map(function ($user) {
             return [
                 'name' => $user->name,
@@ -201,12 +195,11 @@ class UserStudentController extends Controller
             ];
         });
 
-        // Filter based on keyword
         if ($keyword) {
             $transformed = $transformed->filter(function ($item) use ($keyword) {
                 return str_contains(strtolower($item['name']), strtolower($keyword)) ||
                     str_contains(strtolower($item['studentAdmissionNo']), strtolower($keyword));
-            })->values(); // Reset index after filtering
+            })->values();
         }
 
         return response()->json($transformed, 200);

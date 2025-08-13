@@ -31,9 +31,8 @@ class MarksController extends Controller
         ], 201);
     }
 
-    public function calculateGradeApi(Request $request)
+    public function calculateGradeApi($marks)
     {
-        $marks = $request->input('marks');
         $grade = $this->calculateGrade($marks);
 
         return response()->json([
@@ -59,12 +58,8 @@ class MarksController extends Controller
         }
     }
 
-    public function managementStaffReportData(Request $request)
+    public function managementStaffReportData($year, $grade, $exam)
     {
-        $year = $request->input('year');
-        $grade = $request->input('grade');
-        $exam = $request->input('exam');
-
         $subjectAverages = DB::table('marks')
             ->whereYear('created_at', $year)
             ->where('studentGrade', $grade)
@@ -94,10 +89,17 @@ class MarksController extends Controller
             ->get()
             ->groupBy('studentClass') // Group by class in PHP
             ->map(function ($items) {
-                return $items->map(function ($item) {
+                $totalAverageSum = $items->sum('average_marks');
+
+                return $items->map(function ($item) use ($totalAverageSum) {
+                    $subjectPercentage = $totalAverageSum > 0
+                        ? round(($item->average_marks / $totalAverageSum) * 100, 2)
+                        : 0;
+
                     return [
                         'subject' => $item->subject,
-                        'average_mark' => $item->average_marks
+                        'average_mark' => $item->average_marks,
+                        'subject_percentage' => $subjectPercentage // Add percentage
                     ];
                 });
             });
@@ -106,18 +108,13 @@ class MarksController extends Controller
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
             'class_subject_marks' => $classMarks,
-        ], 201);
+        ], 200);
     }
 
-    public function teacherReportData(Request $request)
+    public function teacherReportData($startDate, $endDate, $grade, $class, $exam)
     {
-        $year = $request->input('year');
-        $grade = $request->input('grade');
-        $class = $request->input('class');
-        $exam = $request->input('exam');
-
         $subjectAverages = DB::table('marks')
-            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->where('studentClass', $class)
@@ -125,7 +122,7 @@ class MarksController extends Controller
             ->groupBy('subject')
             ->get();
 
-            
+
         $totalAverageSum = $subjectAverages->sum('average_marks');
         $subjectAveragesWithPercent = $subjectAverages->map(function ($item) use ($totalAverageSum) {
             $percentage = $totalAverageSum > 0
@@ -139,7 +136,7 @@ class MarksController extends Controller
         });
 
         $studentMarks = DB::table('marks')
-            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->where('studentClass', $class)
@@ -154,6 +151,9 @@ class MarksController extends Controller
             ->groupBy('studentName')
             ->map(function ($items, $studentName) {
                 $totalMarks = $items->sum('marks');
+                $subjectCount = $items->count();
+                $averageMarks = $subjectCount > 0 ? round($totalMarks / $subjectCount, 2) : 0;
+
                 return [
                     'studentName' => $studentName,
                     'subjects' => $items->map(function ($item) {
@@ -163,6 +163,7 @@ class MarksController extends Controller
                         ];
                     })->values(),
                     'total_marks' => $totalMarks,
+                    'average_marks' => $averageMarks
                 ];
             })
             ->sortByDesc('total_marks') // Sort from highest to lowest
@@ -175,7 +176,110 @@ class MarksController extends Controller
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
             'student_marks' => $studentMarks,
-        ], 201);
+        ], 200);
+    }
+
+    public function parentReportData(Request $request, $startDate, $endDate, $exam, $month)
+    {
+        $admissionNo = $request->query('admission_no');
+
+        $termYearlyAverages = DB::table('marks')
+            ->where('studentAdmissionNo', $admissionNo)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(
+                DB::raw('YEAR(created_at) as year'),
+                'term',
+                DB::raw('ROUND(AVG(marks), 2) as average_marks')
+            )
+            ->groupBy(DB::raw('YEAR(created_at)'), 'term')
+            ->orderBy('year')
+            ->orderByRaw("FIELD(term, 'First', 'Mid', 'End')")
+            ->get();
+
+        // Group by year
+        $nestedAverages = $termYearlyAverages->groupBy('year')->map(function ($terms, $year) {
+            return [
+                'year'  => $year,
+                'terms' => $terms->map(function ($termData) {
+                    return [
+                        'term'          => $termData->term,
+                        'average_marks' => $termData->average_marks
+                    ];
+                })->values() // re-index array
+            ];
+        })->values();
+
+        $subjectAverages = DB::table('marks')
+            ->where('studentAdmissionNo', $admissionNo)
+            ->where('term', $exam)
+            ->where('month', $month)
+            ->select('subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
+            ->groupBy('subject')
+            ->get();
+
+
+        $totalAverageSum = $subjectAverages->sum('average_marks');
+        $subjectAveragesWithPercent = $subjectAverages->map(function ($item) use ($totalAverageSum) {
+            $percentage = $totalAverageSum > 0
+                ? round(($item->average_marks / $totalAverageSum) * 100, 2)
+                : 0;
+            return [
+                'subject' => $item->subject,
+                'average_marks' => $item->average_marks,
+                'percentage' => $percentage
+            ];
+        });
+
+        $subjectYearlyMarks = DB::table('marks')
+            ->where('studentAdmissionNo', $admissionNo)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(
+                DB::raw('YEAR(created_at) as year'),
+                'subject',
+                DB::raw('ROUND(AVG(marks), 2) as average_marks')
+            )
+            ->groupBy(DB::raw('YEAR(created_at)'), 'subject')
+            ->orderBy('year')
+            ->get();
+
+        $groupedData = $subjectYearlyMarks->groupBy('subject');
+
+        $highestMarksPerSubject = DB::table('marks')
+            ->where('term', $exam)
+            ->where('month', $month)
+            ->select('subject', DB::raw('MAX(marks) as marks'))
+            ->groupBy('subject')
+            ->get()
+            ->map(function ($item) use ($exam, $month) {
+                $record = DB::table('marks')
+                    ->where('term', $exam)
+                    ->where('month', $month)
+                    ->where('subject', $item->subject)
+                    ->where('marks', $item->marks)
+                    ->select('subject', 'marks', 'marksGrade')
+                    ->first();
+
+                return [
+                    'subject'    => $record->subject,
+                    'marks'      => $record->marks,
+                    'marksGrade' => $record->marksGrade
+                ];
+            });
+
+        $marksAndGrades = DB::table('marks')
+            ->where('studentAdmissionNo', $admissionNo)
+            ->where('term', $exam)
+            ->where('month', $month)
+            ->select('subject', 'marks', 'marksGrade')
+            ->get();
+
+        return response()->json([
+            'yearly_term_averages' => $nestedAverages,
+            'subject_marks' => $subjectAveragesWithPercent,
+            'subject_yearly_marks' => $groupedData,
+            'highest_marks_per_subject' => $highestMarksPerSubject,
+            'marks_and_grades' => $marksAndGrades,
+        ], 200);
     }
 
 }
