@@ -135,6 +135,42 @@ class MarksController extends Controller
             ];
         });
 
+        $yearlySubjectAverages = DB::table('marks')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('studentGrade', $grade)
+            ->where('term', $exam)
+            ->where('studentClass', $class)
+            ->select(
+                DB::raw('YEAR(created_at) as year'),
+                'subject',
+                DB::raw('ROUND(AVG(marks), 2) as average_marks')
+            )
+            ->groupBy(DB::raw('YEAR(created_at)'), 'subject')
+            ->orderBy('year')
+            ->get()
+            ->groupBy('year')
+            ->map(function ($subjects, $year) {
+                $totalAverageSum = $subjects->sum('average_marks');
+
+                $subjectsWithPercent = $subjects->map(function ($item) use ($totalAverageSum) {
+                    $percentage = $totalAverageSum > 0
+                        ? round(($item->average_marks / $totalAverageSum) * 100, 2)
+                        : 0;
+
+                    return [
+                        'subject' => $item->subject,
+                        'average_marks' => $item->average_marks,
+                        'percentage' => $percentage
+                    ];
+                });
+
+                return [
+                    'year' => $year,
+                    'subjects' => $subjectsWithPercent->values()
+                ];
+            })
+            ->values();
+
         $studentMarks = DB::table('marks')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->where('studentGrade', $grade)
@@ -175,6 +211,7 @@ class MarksController extends Controller
 
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
+            'yearly_subject_averages' => $yearlySubjectAverages,
             'student_marks' => $studentMarks,
         ], 200);
     }
