@@ -22,7 +22,7 @@ class RelationCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'relationId' => 'required|string|max:255',
+            'relationId' => 'nullable|string|max:255',
             'relation' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ];

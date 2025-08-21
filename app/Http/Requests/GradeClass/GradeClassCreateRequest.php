@@ -22,7 +22,7 @@ class GradeClassCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'classId' => 'required|string|max:255',
+            'classId' => 'nullable|string|max:255',
             'class' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'gradeId' => 'nullable|string|max:255',
