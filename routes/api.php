@@ -21,6 +21,8 @@ use App\Http\Controllers\UserTypeRegister\UserTypeRegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user-register', [UserRegisterController::class, 'store']);
+Route::delete('delete-register', [UserRegisterController::class, 'destroy']);
+
 Route::post('user-teacher-register', [UserTeacherController::class, 'store']);
 Route::post('user-student-register', [UserStudentController::class, 'store']);
 Route::post('user-parent-register', [UserParentController::class, 'store']);

@@ -28,11 +28,11 @@ class MarksCreateRequest extends FormRequest
             'marks.*.studentGrade'      => 'required|string|max:255',
             'marks.*.studentClass'      => 'required|string|max:255',
             'marks.*.term'              => 'required|string|max:255',
-            'marks.*.month'             => 'required|string|max:255',
+            'marks.*.month'             => 'nullable|string|max:255',
             'marks.*.subject'           => 'required|string|max:255',
-            'marks.*.medium'            => 'required|string|max:255',
+            'marks.*.medium'            => 'nullable|string|max:255',
             'marks.*.marks'             => 'required|integer',
-            'marks.*.marksGrade'        => 'required|string|max:255',
+            'marks.*.marksGrade'        => 'nullable|string|max:255',
         ];
     }
 }

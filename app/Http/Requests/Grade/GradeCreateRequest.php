@@ -25,7 +25,7 @@ class GradeCreateRequest extends FormRequest
             'gradeId' => 'required|string|max:255',
             'grade' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'schoolId' => 'required|string|max:255',
+            'schoolId' => 'nullable|string|max:255',
         ];
     }
 }
