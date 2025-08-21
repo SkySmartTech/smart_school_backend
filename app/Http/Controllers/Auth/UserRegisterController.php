@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UserRegisterRequest;
 use App\Repositories\All\User\UserInterface;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserRegisterController extends Controller
@@ -29,5 +29,13 @@ class UserRegisterController extends Controller
             'userId'    => $user->id,
             'userType'  => $user->userType ?? null,
         ], 201);
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->header('user_id');
+
+        $this->userInterface->deleteById($id);
+        return response()->json();
     }
 }

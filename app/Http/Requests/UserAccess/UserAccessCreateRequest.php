@@ -23,7 +23,7 @@ class UserAccessCreateRequest extends FormRequest
     {
         return [
             'userType'          => 'required|string',
-            'description'       => 'required|string',
+            'description'       => 'nullable|string',
             'permissionObject'  => 'nullable|array',
         ];
     }

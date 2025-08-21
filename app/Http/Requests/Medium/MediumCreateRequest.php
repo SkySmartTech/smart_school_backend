@@ -22,7 +22,7 @@ class MediumCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mediumId' => 'required|string|max:255',
+            'mediumId' => 'nullable|string|max:255',
             'medium' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ];
