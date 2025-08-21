@@ -15,6 +15,8 @@ use App\Repositories\All\User\UserInterface;
 use App\Repositories\All\UserAccess\UserAccessInterface;
 use App\Repositories\All\UserStudent\UserStudentInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class UserController extends Controller
 {
@@ -41,6 +43,12 @@ class UserController extends Controller
         }
 
         $userData = $user->toArray();
+
+        $role = $user->userRole;
+
+        $access = DB::table('user_accesses')
+                    ->where('userType', $role)
+                    ->pluck('permissionObject');
 
         switch (strtolower($user->userType)) {
             case 'teacher':
@@ -73,6 +81,8 @@ class UserController extends Controller
             default:
                 $userData['type_data'] = null;
         }
+
+        $userData['access'] = $access ?? [];
 
         return response()->json($userData, 200);
 
