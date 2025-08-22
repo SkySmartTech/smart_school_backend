@@ -27,6 +27,7 @@ class MarksCreateRequest extends FormRequest
             'marks.*.studentName'       => 'required|string|max:255',
             'marks.*.studentGrade'      => 'required|string|max:255',
             'marks.*.studentClass'      => 'required|string|max:255',
+            'marks.*.year'              => 'required|string|max:255',
             'marks.*.term'              => 'required|string|max:255',
             'marks.*.month'             => 'nullable|string|max:255',
             'marks.*.subject'           => 'required|string|max:255',
