@@ -8,6 +8,7 @@ use App\Models\Marks;
 use App\Repositories\All\Marks\MarksInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class MarksController extends Controller
 {
@@ -31,37 +32,10 @@ class MarksController extends Controller
         ], 201);
     }
 
-    public function calculateGradeApi($marks)
-    {
-        $grade = $this->calculateGrade($marks);
-
-        return response()->json([
-            'marks' => $marks,
-            'grade' => $grade,
-        ], 200);
-    }
-
-    private function calculateGrade($marks)
-    {
-        if ($marks >= 90) {
-            return 'A+';
-        } elseif ($marks >= 75) {
-            return 'A';
-        } elseif ($marks >= 65) {
-            return 'B';
-        } elseif ($marks >= 50) {
-            return 'C';
-        } elseif ($marks >= 35) {
-            return 'S';
-        } else {
-            return 'F';
-        }
-    }
-
     public function managementStaffReportData($year, $grade, $exam)
     {
         $subjectAverages = DB::table('marks')
-            ->whereYear('created_at', $year)
+            ->whereYear('year', $year)
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->select('subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
@@ -81,7 +55,7 @@ class MarksController extends Controller
         });
 
         $classMarks = DB::table('marks')
-            ->whereYear('created_at', $year)
+            ->whereYear('year', $year)
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->select('studentClass', 'subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
@@ -113,8 +87,10 @@ class MarksController extends Controller
 
     public function teacherReportData($startDate, $endDate, $grade, $class, $exam)
     {
+        $year = Carbon::parse(str_replace('.', '-', $endDate))->year;
+
         $subjectAverages = DB::table('marks')
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('year', [$startDate, $endDate])
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->where('studentClass', $class)
@@ -136,16 +112,16 @@ class MarksController extends Controller
         });
 
         $yearlySubjectAverages = DB::table('marks')
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('year', [$startDate, $endDate])
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->where('studentClass', $class)
             ->select(
-                DB::raw('YEAR(created_at) as year'),
+                DB::raw('YEAR(year) as year'),
                 'subject',
                 DB::raw('ROUND(AVG(marks), 2) as average_marks')
             )
-            ->groupBy(DB::raw('YEAR(created_at)'), 'subject')
+            ->groupBy(DB::raw('YEAR(year)'), 'subject')
             ->orderBy('year')
             ->get()
             ->groupBy('year')
@@ -172,7 +148,7 @@ class MarksController extends Controller
             ->values();
 
         $studentMarks = DB::table('marks')
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('year', $year)
             ->where('studentGrade', $grade)
             ->where('term', $exam)
             ->where('studentClass', $class)
@@ -202,7 +178,7 @@ class MarksController extends Controller
                     'average_marks' => $averageMarks
                 ];
             })
-            ->sortByDesc('total_marks') // Sort from highest to lowest
+            ->sortByDesc('total_marks')
             ->values()
             ->map(function ($item, $index) {
                 $item['rank'] = $index + 1;
@@ -216,24 +192,25 @@ class MarksController extends Controller
         ], 200);
     }
 
-    public function parentReportData(Request $request, $startDate, $endDate, $exam, $month)
+    public function parentReportData(Request $request, $startDate, $endDate, $exam, $month, $studentGrade, $studentClass)
     {
         $admissionNo = $request->query('admission_no');
+        $currentYear = Carbon::parse(str_replace('.', '-', $endDate))->year;
 
         $termYearlyAverages = DB::table('marks')
             ->where('studentAdmissionNo', $admissionNo)
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('year', [$startDate, $endDate])
             ->select(
-                DB::raw('YEAR(created_at) as year'),
+                DB::raw('YEAR(year) as year'),
                 'term',
                 DB::raw('ROUND(AVG(marks), 2) as average_marks')
             )
-            ->groupBy(DB::raw('YEAR(created_at)'), 'term')
+            ->groupBy(DB::raw('YEAR(year)'), 'term')
             ->orderBy('year')
             ->orderByRaw("FIELD(term, 'First', 'Mid', 'End')")
             ->get();
 
-        // Group by year
+        // group by year
         $nestedAverages = $termYearlyAverages->groupBy('year')->map(function ($terms, $year) {
             return [
                 'year'  => $year,
@@ -242,18 +219,23 @@ class MarksController extends Controller
                         'term'          => $termData->term,
                         'average_marks' => $termData->average_marks
                     ];
-                })->values() // re-index array
+                })->values()
             ];
         })->values();
 
-        $subjectAverages = DB::table('marks')
+        // Subject averages
+        $subjectAveragesQuery = DB::table('marks')
             ->where('studentAdmissionNo', $admissionNo)
-            ->where('term', $exam)
-            ->where('month', $month)
+            ->where('term', $exam);
+
+        if ($month !== "null") {   // ✅ only apply if not null
+            $subjectAveragesQuery->where('month', $month);
+        }
+
+        $subjectAverages = $subjectAveragesQuery
             ->select('subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
             ->groupBy('subject')
             ->get();
-
 
         $totalAverageSum = $subjectAverages->sum('average_marks');
         $subjectAveragesWithPercent = $subjectAverages->map(function ($item) use ($totalAverageSum) {
@@ -267,34 +249,46 @@ class MarksController extends Controller
             ];
         });
 
+        // Subject yearly marks
         $subjectYearlyMarks = DB::table('marks')
             ->where('studentAdmissionNo', $admissionNo)
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('year', [$startDate, $endDate])
             ->select(
-                DB::raw('YEAR(created_at) as year'),
+                DB::raw('YEAR(year) as year'),
                 'subject',
                 DB::raw('ROUND(AVG(marks), 2) as average_marks')
             )
-            ->groupBy(DB::raw('YEAR(created_at)'), 'subject')
+            ->groupBy(DB::raw('YEAR(year)'), 'subject')
             ->orderBy('year')
             ->get();
 
         $groupedData = $subjectYearlyMarks->groupBy('subject');
 
-        $highestMarksPerSubject = DB::table('marks')
-            ->where('term', $exam)
-            ->where('month', $month)
+        // Highest marks per subject
+        $highestMarksQuery = DB::table('marks')
+            ->where('studentGrade', $studentGrade)
+            ->where('studentClass', $studentClass)
+            ->where('term', $exam);
+
+        if ($month !== "null") {
+            $highestMarksQuery->where('month', $month);
+        }
+
+        $highestMarksPerSubject = $highestMarksQuery
             ->select('subject', DB::raw('MAX(marks) as marks'))
             ->groupBy('subject')
             ->get()
             ->map(function ($item) use ($exam, $month) {
-                $record = DB::table('marks')
+                $recordQuery = DB::table('marks')
                     ->where('term', $exam)
-                    ->where('month', $month)
                     ->where('subject', $item->subject)
-                    ->where('marks', $item->marks)
-                    ->select('subject', 'marks', 'marksGrade')
-                    ->first();
+                    ->where('marks', $item->marks);
+
+                if ($month !== "null") {
+                    $recordQuery->where('month', $month);
+                }
+
+                $record = $recordQuery->select('subject', 'marks', 'marksGrade')->first();
 
                 return [
                     'subject'    => $record->subject,
@@ -303,19 +297,26 @@ class MarksController extends Controller
                 ];
             });
 
-        $marksAndGrades = DB::table('marks')
+        // Marks & Grades
+        $marksAndGradesQuery = DB::table('marks')
             ->where('studentAdmissionNo', $admissionNo)
-            ->where('term', $exam)
-            ->where('month', $month)
+            ->where('year', $currentYear)
+            ->where('term', $exam);
+
+        if ($month !== "null") {
+            $marksAndGradesQuery->where('month', $month);
+        }
+
+        $marksAndGrades = $marksAndGradesQuery
             ->select('subject', 'marks', 'marksGrade')
             ->get();
 
         return response()->json([
-            'yearly_term_averages' => $nestedAverages,
-            'subject_marks' => $subjectAveragesWithPercent,
-            'subject_yearly_marks' => $groupedData,
+            'yearly_term_averages'   => $nestedAverages,
+            'subject_marks'          => $subjectAveragesWithPercent,
+            'subject_yearly_marks'   => $groupedData,
             'highest_marks_per_subject' => $highestMarksPerSubject,
-            'marks_and_grades' => $marksAndGrades,
+            'marks_and_grades'       => $marksAndGrades,
         ], 200);
     }
 

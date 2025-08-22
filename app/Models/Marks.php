@@ -14,6 +14,7 @@ class Marks extends Model
         'studentName',
         'studentGrade',
         'studentClass',
+        'year',
         'term',
         'month',
         'subject',
