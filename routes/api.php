@@ -105,14 +105,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('grade-class/{id}/update', [GradeClassController::class, 'update']);
     Route::delete('grade-class/{id}/delete', [GradeClassController::class, 'destroy']);
 
-    Route::get('student-admission-data/{grade}/{class}', [UserStudentController::class, 'showAdmissionData']);
     Route::get('search-admission-data/{grade}/{class}', [UserStudentController::class, 'searchAdmissionData']);
     Route::post('add-marks', [MarksController::class, 'store']);
-    Route::get('calculate-grade/{marks}', [MarksController::class, 'calculateGradeApi']);
 
     Route::get('management-staff-report/{year}/{grade}/{exam}', [MarksController::class, 'managementStaffReportData']);
     Route::get('teacher-report-data/{start_date}/{end_date}/{grade}/{class}/{exam}', [MarksController::class, 'teacherReportData']);
-    Route::get('parent-report-data/{start_date}/{end_date}/{exam}/{month}', [MarksController::class, 'parentReportData']);
+    Route::get('parent-report-data/{start_date}/{end_date}/{exam}/{month}/{student_grade}/{student_class}', [MarksController::class, 'parentReportData']);
 
 
 });

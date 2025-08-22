@@ -150,29 +150,6 @@ class UserStudentController extends Controller
         ]);
     }
 
-    public function showAdmissionData($grade, $class)
-    {
-        $admissionData = User::where('userType', 'student')
-            ->whereHas('student', function ($query) use ($grade, $class) {
-                $query->where('studentGrade', $grade)
-                    ->where('studentClass', $class);
-            })
-            ->with(['student' => function ($query) {
-                $query->select('userId', 'studentAdmissionNo'); // ensure only necessary fields
-            }])
-            ->select('id', 'name') // only id (for relation) and name
-            ->get();
-
-        $transformed = $admissionData->map(function ($user) {
-            return [
-                'name' => $user->name,
-                'studentAdmissionNo' => $user->student->studentAdmissionNo ?? null,
-            ];
-        });
-
-        return response()->json($transformed, 200);
-    }
-
     public function searchAdmissionData($grade, $class, Request $request)
     {
         $keyword = $request->input('keyword');
