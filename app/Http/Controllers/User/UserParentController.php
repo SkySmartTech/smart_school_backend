@@ -77,19 +77,15 @@ class UserParentController extends Controller
 
         $user = $this->userInterface->create($userData);
 
-        $studentData = [
+        $parentData = [
             'userId'        => $user->id,
             'userType'      => $user->userType,
-            'studentGrade'  => $validatedData['studentGrade'],
-            'medium'       => $validatedData['medium'],
-            'studentClass'  => $validatedData['studentClass'],
             'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
-            'parentNo'     => $validatedData['parentNo'],
-            'parentProfession' => $validatedData['parentProfession'],
-            'modifiedBy'    => Auth::user()->name,
+            'profession'  => $validatedData['profession'],
+            'relation'      => $validatedData['relation'],
         ];
 
-        $this->userParentInterface->create($studentData);
+        $this->userParentInterface->create($parentData);
 
         return response()->json([
             'message' => 'New parent added successfully!',
@@ -118,17 +114,14 @@ class UserParentController extends Controller
         $this->userInterface->update($id, $userData);
 
 
-        $teacherData = [
+        $parentData = [
             'userType'      => $validatedData['userType'],
-            'teacherGrades' => $validatedData['teacherGrades'],
-            'teacherClass'  => $validatedData['teacherClass'],
-            'subjects'      => $validatedData['subjects'],
-            'staffNo'       => $validatedData['staffNo'],
-            'medium'        => $validatedData['medium'],
-            'modifiedBy'    => Auth::user()->name,
+            'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
+            'profession'  => $validatedData['profession'],
+            'relation'      => $validatedData['relation'],
         ];
 
-        $this->userParentInterface->updateByUserId($id, $teacherData);
+        $this->userParentInterface->updateByUserId($id, $parentData);
 
         return response()->json([
             'message' => 'User Parent updated successfully!',

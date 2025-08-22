@@ -21,6 +21,8 @@ use App\Http\Controllers\UserTypeRegister\UserTypeRegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user-register', [UserRegisterController::class, 'store']);
+Route::delete('delete-register', [UserRegisterController::class, 'destroy']);
+
 Route::post('user-teacher-register', [UserTeacherController::class, 'store']);
 Route::post('user-student-register', [UserStudentController::class, 'store']);
 Route::post('user-parent-register', [UserParentController::class, 'store']);
@@ -32,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('user', [UserController::class, 'show']);
     Route::post('user/{id}/profile-update', [UserController::class, 'profileUpdate']);
-    Route::post('user/search', [UserController::class, 'search']);
+    Route::get('user/search', [UserController::class, 'search']);
 
     Route::post('add-new-teacher', [UserTeacherController::class, 'create']);
     Route::get('all-teachers', [UserTeacherController::class, 'showTeachers']);
@@ -103,9 +105,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('grade-class/{id}/update', [GradeClassController::class, 'update']);
     Route::delete('grade-class/{id}/delete', [GradeClassController::class, 'destroy']);
 
-    Route::post('student-admission-data', [UserStudentController::class, 'showAdmissionData']);
-    Route::get('search-admission-data', [UserStudentController::class, 'searchAdmissionData']);
+    Route::get('student-admission-data/{grade}/{class}', [UserStudentController::class, 'showAdmissionData']);
+    Route::get('search-admission-data/{grade}/{class}', [UserStudentController::class, 'searchAdmissionData']);
     Route::post('add-marks', [MarksController::class, 'store']);
-    Route::post('calculate-grade', [MarksController::class, 'calculateGradeApi']);
+    Route::get('calculate-grade/{marks}', [MarksController::class, 'calculateGradeApi']);
+
+    Route::get('management-staff-report/{year}/{grade}/{exam}', [MarksController::class, 'managementStaffReportData']);
+    Route::get('teacher-report-data/{start_date}/{end_date}/{grade}/{class}/{exam}', [MarksController::class, 'teacherReportData']);
+    Route::get('parent-report-data/{start_date}/{end_date}/{exam}/{month}', [MarksController::class, 'parentReportData']);
+
 
 });

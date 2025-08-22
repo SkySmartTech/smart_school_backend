@@ -22,7 +22,7 @@ class SchoolCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'schoolId' => 'required|string|max:255',
+            'schoolId' => 'nullable|string|max:255',
             'school' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ];
