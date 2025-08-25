@@ -80,6 +80,7 @@ class MarksController extends Controller
 
 
         return response()->json([
+            'subject_averages' => $subjectAverages,
             'subject_marks' => $subjectAveragesWithPercent,
             'class_subject_marks' => $classMarks,
         ], 200);
@@ -187,6 +188,7 @@ class MarksController extends Controller
 
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
+            'year' => $year,
             'yearly_subject_averages' => $yearlySubjectAverages,
             'student_marks' => $studentMarks,
         ], 200);
@@ -316,6 +318,7 @@ class MarksController extends Controller
             'yearly_term_averages'   => $nestedAverages,
             'subject_marks'          => $subjectAveragesWithPercent,
             'subject_yearly_marks'   => $groupedData,
+            'current_year'           => $currentYear,
             'highest_marks_per_subject' => $highestMarksPerSubject,
             'marks_and_grades'       => $marksAndGrades,
         ], 200);
