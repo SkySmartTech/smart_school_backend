@@ -268,6 +268,7 @@ class MarksController extends Controller
         $highestMarksQuery = DB::table('marks')
             ->where('studentGrade', $studentGrade)
             ->where('studentClass', $studentClass)
+            ->where('year', $currentYear)
             ->where('term', $exam);
 
         if ($month !== "null") {
