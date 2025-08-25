@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('studentName')->nullable();
             $table->string('studentGrade')->nullable();
             $table->string('studentClass')->nullable();
-            $table->enum('term', ['First', 'Mid', 'End'])->nullable();
+            $table->string('medium')->nullable();
+            $table->year('year')->nullable();
+            $table->enum('term', ['First', 'Mid', 'End', 'Monthly'])->nullable();
+            $table->string('month')->nullable();
             $table->string('subject')->nullable();
             $table->integer('marks')->nullable();
             $table->string('marksGrade')->nullable();
