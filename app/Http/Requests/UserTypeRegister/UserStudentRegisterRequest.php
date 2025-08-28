@@ -22,12 +22,8 @@ class UserStudentRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'studentGrade' => 'required|string|max:255',
-            'medium' => 'nullable|string|max:255',
-            'studentClass' => 'nullable|string|max:255',
+            'studentGrade' => 'nullable|string|max:255',
             'studentAdmissionNo' => 'nullable|string|max:255',
-            'parentNo' => 'nullable|string|max:255',
-            'parentProfession' => 'nullable|string|max:255',
         ];
     }
 }
