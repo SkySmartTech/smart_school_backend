@@ -31,8 +31,8 @@ class UserParentController extends Controller
         Request $request,
         UserParentRegisterRequest $ParentRequest)
     {
-        $userId = $request->header('user_id');
-        $userType = $request->header('user_type');
+        $userId = $request->header('userId');
+        $userType = $request->header('userType');
 
         $validated = $ParentRequest->validated();
         $validated['userId'] = $userId;

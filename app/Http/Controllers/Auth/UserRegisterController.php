@@ -33,7 +33,7 @@ class UserRegisterController extends Controller
 
     public function destroy(Request $request)
     {
-        $id = $request->header('user_id');
+        $id = $request->header('userId');
 
         $this->userInterface->deleteById($id);
         return response()->json();

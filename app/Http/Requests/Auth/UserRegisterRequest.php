@@ -23,15 +23,15 @@ class UserRegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'address' => 'nullable|string|max:255',
+            'address' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
             'birthDay' => 'nullable|date',
-            'contact' => 'nullable|string|max:15',
+            'contact' => 'required|string|max:15',
             'userType' => 'required|string|max:255',
-            'gender' => 'nullable|string|max:255',
+            'gender' => 'required|string|max:255',
             'location' => 'nullable|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
-            'password' => 'required|string|min:4|confirmed',
+            'password' => 'required|string|min:6|confirmed',
             'photo' => 'nullable|string|max:255',
         ];
     }

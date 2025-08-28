@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('user-teacher/{id}/status-update', [UserTeacherController::class, 'updateStatus']);
 
     Route::post('add-new-student', [UserStudentController::class, 'create']);
+    Route::post('add-new-students', [UserStudentController::class, 'multiCreate']);
     Route::get('all-students', [UserStudentController::class, 'showStudents']);
     Route::post('user-student/{id}/update', [UserStudentController::class, 'update']);
     Route::post('user-student/{id}/status-update', [UserStudentController::class, 'updateStatus']);

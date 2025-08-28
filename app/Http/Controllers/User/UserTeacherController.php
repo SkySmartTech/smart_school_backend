@@ -28,21 +28,13 @@ class UserTeacherController extends Controller
         $this->userInterface = $userInterface;
     }
 
-    public function store(
-        Request $request,
-        UserTeacherRegisterRequest $teacherRequest
-        )
+    public function store(UserTeacherRegisterRequest $teacherRequest)
     {
-        $userId = $request->header('user_id');
-        $userType = $request->header('user_type');
-
-
         $validated = $teacherRequest->validated();
-        $validated['userId'] = $userId;
-        $validated['userType'] = $userType;
 
-
-        $this->userTeacherInterface->create($validated);
+        foreach ($validated['teacherData'] as $teacher) {
+            $this->userTeacherInterface->create($teacher);
+        }
 
         return response()->json([
             'message' => 'User Teacher registered successfully!',

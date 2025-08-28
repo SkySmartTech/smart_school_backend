@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserStudentCreateRequest;
 use App\Http\Requests\User\UserStudentUpdateRequest;
+use App\Http\Requests\UserTypeRegister\StudentMultiCreateRequest;
 use App\Http\Requests\UserTypeRegister\UserStudentRegisterRequest;
 use App\Models\User;
 use App\Repositories\All\User\UserInterface;
@@ -32,8 +33,8 @@ class UserStudentController extends Controller
         UserStudentRegisterRequest $studentRequest
         )
     {
-        $userId = $request->header('user_id');
-        $userType = $request->header('user_type');
+        $userId = $request->header('userId');
+        $userType = $request->header('userType');
 
 
         $validated = $studentRequest->validated();
@@ -86,8 +87,6 @@ class UserStudentController extends Controller
             'medium'       => $validatedData['medium'],
             'studentClass'  => $validatedData['studentClass'],
             'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
-            'parentNo'     => $validatedData['parentNo'],
-            'parentProfession' => $validatedData['parentProfession'],
             'modifiedBy'    => Auth::user()->name,
         ];
 
@@ -182,6 +181,55 @@ class UserStudentController extends Controller
         return response()->json($transformed, 200);
     }
 
+
+    public function multiCreate(StudentMultiCreateRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        foreach ($validatedData['studentData'] as $student) {
+        // Hash password
+            $student['password'] = Hash::make($student['password']);
+
+            // Prepare user data
+            $userData = [
+                'name'      => $student['name'],
+                'address'   => $student['address'] ?? null,
+                'email'     => $student['email'],
+                'birthDay'  => $student['birthDay'] ?? null,
+                'contact'   => $student['contact'] ?? null,
+                'userType'  => $student['userType'],
+                'gender'    => $student['gender'] ?? null,
+                'location'  => $student['location'] ?? null,
+                'username'  => $student['username'],
+                'password'  => $student['password'],
+                'photo'     => $student['photo'] ?? null,
+                'userRole'  => $student['userRole'] ?? 'student',
+                'status'    => $student['status'] ?? true,
+            ];
+
+            // Create user
+            $user = $this->userInterface->create($userData);
+
+            // Prepare student-specific data
+            $studentData = [
+                'userId'             => $user->id,
+                'userType'           => $user->userType,
+                'studentGrade'       => $student['studentGrade'] ?? null,
+                'studentClass'       => $student['studentClass'] ?? null,
+                'subject'            => $student['subject'] ?? null,
+                'medium'             => $student['medium'] ?? null,
+                'studentAdmissionNo' => $student['studentAdmissionNo'] ?? null,
+                'modifiedBy'         => Auth::user()->name,
+            ];
+
+            // Save student data
+            $this->userStudentInterface->create($studentData);
+        }
+
+        return response()->json([
+            'message' => 'Students Created successfully!',
+        ], 201);
+    }
 
 
 }

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('username')->nullable();
             $table->string('password')->nullable();
             $table->string('photo')->nullable();
-            $table->enum('userRole', ['admin','user'])->default('user')->nullable();
+            $table->enum('userRole', ['admin', 'user', 'managementStaff', 'userStudent', 'userParent', 'userTeacher', 'userClassTeacher'])->default('user')->nullable();
             $table->boolean('status')->default(false)->nullable();
             $table->timestamps();
         });
