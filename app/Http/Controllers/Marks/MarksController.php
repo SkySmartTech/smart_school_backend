@@ -78,10 +78,28 @@ class MarksController extends Controller
                 });
             });
 
+        $overallSubjectAvg = DB::table('marks')
+                ->where('year', $year)
+                ->where('studentGrade', $grade)
+                ->where('term', $exam)
+                ->select('studentClass', 'subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
+                ->groupBy('studentClass', 'subject')
+                ->get()
+                ->groupBy('studentClass') // Group by class in PHP
+                ->map(function ($items) {
+                    $overallClassAverage = $items->avg('average_marks');
+
+                        return [
+                            'overall_average' => $overallClassAverage
+                        ];
+                    });
+
+
 
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
             'class_subject_marks' => $classMarks,
+            'overall_subject_average' => $overallSubjectAvg,
         ], 200);
     }
 
