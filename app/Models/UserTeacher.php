@@ -10,26 +10,18 @@ class UserTeacher extends Model
     use HasFactory;
 
     protected $fillable = [
-        'teacherGrades',
-        'subjects',
+        'teacherGrade',
+        'subject',
         'teacherClass',
         'staffNo',
         'medium',
         'userId',
         'userType',
-        'userRole',
         'modifiedBy'
-    ];
-
-    protected $casts = [
-        'teacherGrades' => 'array',
-        'teacherClass' => 'array',
-        'subjects' => 'array',
-        'medium' => 'array',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'userId', 'id');
     }
 }

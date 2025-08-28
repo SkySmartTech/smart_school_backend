@@ -22,11 +22,14 @@ class UserTeacherRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'teacherGrades' => 'required|array',
-            'teacherClass' => 'required|array',
-            'subjects' => 'required|array',
-            'staffNo' => 'required|string|max:255',
-            'medium' => 'required|array'
+            'teacherData'           => 'required|array',
+            'teacherData.*.teacherGrade'  => 'nullable|string|max:255',
+            'teacherData.*.teacherClass'  => 'nullable|string|max:255',
+            'teacherData.*.subject'       => 'nullable|string|max:255',
+            'teacherData.*.medium'        => 'nullable|string|max:255',
+            'teacherData.*.staffNo'       => 'nullable|string|max:255',
+            'teacherData.*.userId'       => 'nullable|string|max:255',
+            'teacherData.*.userType'       => 'nullable|string|max:255',
         ];
     }
 }

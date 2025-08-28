@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('studentAdmissionNo')->nullable();
             $table->string('profession')->nullable();
+            $table->string('parentNo')->nullable();
             $table->enum('relation', ['father', 'mother', 'guardian'])->nullable();
             $table->string('userId')->nullable();
             $table->string('userType')->nullable();
+            $table->string('modifiedBy')->nullable();
             $table->timestamps();
         });
     }

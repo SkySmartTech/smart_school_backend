@@ -52,8 +52,8 @@ class UserController extends Controller
 
         switch (strtolower($user->userType)) {
             case 'teacher':
-                $teacherData = $user->teacher; // eager load teacher data
-                $userData['teacher_data'] = $teacherData;
+                $teacherData = $user->teacher;
+                $userData['teacher_data'] = $teacherData ? $teacherData->toArray() : [];
                 break;
 
             case 'student':
