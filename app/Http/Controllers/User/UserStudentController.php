@@ -216,7 +216,6 @@ class UserStudentController extends Controller
                 'userType'           => $user->userType,
                 'studentGrade'       => $student['studentGrade'] ?? null,
                 'studentClass'       => $student['studentClass'] ?? null,
-                'subject'            => $student['subject'] ?? null,
                 'medium'             => $student['medium'] ?? null,
                 'studentAdmissionNo' => $student['studentAdmissionNo'] ?? null,
                 'modifiedBy'         => Auth::user()->name,
