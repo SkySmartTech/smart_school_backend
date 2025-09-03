@@ -10,9 +10,11 @@ use App\Http\Requests\UserTypeRegister\UserParentRegisterRequest;
 use App\Http\Requests\UserTypeRegister\UserStudentRegisterRequest;
 use App\Http\Requests\UserTypeRegister\UserTeacherRegisterRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use App\Models\UserParent;
 use App\Repositories\All\User\UserInterface;
 use App\Repositories\All\UserAccess\UserAccessInterface;
+use App\Repositories\All\UserParent\UserParentInterface;
 use App\Repositories\All\UserStudent\UserStudentInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,16 +25,20 @@ class UserController extends Controller
     protected $userInterface;
     protected $userAccessInterface;
     protected $userStudentInterface;
+    protected $userParentInterface;
 
     public function __construct(
         UserInterface $userInterface,
         UserAccessInterface $userAccessInterface,
-        UserStudentInterface $userStudentInterface
+        UserStudentInterface $userStudentInterface,
+        UserParentInterface $userParentInterface,
+
         )
     {
         $this->userInterface = $userInterface;
         $this->userAccessInterface = $userAccessInterface;
         $this->userStudentInterface = $userStudentInterface;
+        $this->userParentInterface = $userParentInterface;
     }
 
     public function show(Request $request)
@@ -62,7 +68,7 @@ class UserController extends Controller
                 break;
 
             case 'parent':
-                $parentData = $user->parent()->with('student.user')->first();
+                $parentData = $user->userParent()->with('student.user')->first();
 
                 if ($parentData && $parentData->student) {
                     $userData['parent_data'] = [
@@ -117,40 +123,78 @@ class UserController extends Controller
         return response()->json($users, 200);
     }
 
-    public function profileUpdate(
-        UserProfileUpdateRequest $request,
-        UserTeacherRegisterRequest $teacherRequest,
-        UserStudentRegisterRequest $studentRequest,
-        UserParentRegisterRequest $parentRequest,
-        $id
-    ) {
-        $commonData = $request->validated();
-        $user = $this->userInterface->update($id, $commonData);
+    public function profileUpdate(Request $request, $id)
+    {
+        $user = $request->user();
 
-        $user = User::find($id);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'birthDay' => 'nullable|date',
+            'contact' => 'required|string|max:15',
+            'userType' => 'required|string|max:255',
+            'gender' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'username' => 'required|string|max:255',
+        ]);
 
+        $this->userInterface->update($id, $validatedData);
+
+        // Handle extra profile data depending on role
         switch (strtolower($user->userType)) {
             case 'teacher':
-                $teacherData = $teacherRequest->validated();
-                $user->teacher()->update($teacherData);
+                $teacherData = $request->validate([
+                    'teacherData'                  => 'nullable|array',
+                    'teacherData.*.teacherGrade'   => 'nullable|string|max:255',
+                    'teacherData.*.teacherClass'   => 'nullable|string|max:255',
+                    'teacherData.*.subject'        => 'nullable|string|max:255',
+                    'teacherData.*.medium'         => 'nullable|string|max:255',
+                    'teacherData.*.staffNo'        => 'nullable|string|max:255',
+                    'teacherData.*.userId'         => 'nullable|integer|exists:users,id',
+                    'teacherData.*.userType'       => 'nullable|string|max:255',
+                ]);
+
+                // Remove old teacher records if needed
+                $user->teacher()->delete();
+
+                // Insert new teacher records
+                if (!empty($teacherData['teacherData'])) {
+                    foreach ($teacherData['teacherData'] as $teacher) {
+                        $teacher['modifiedBy']    = Auth::user()->name;
+                        $user->teacher()->create($teacher);
+                    }
+                }
+
                 break;
 
             case 'student':
-                $studentData = $studentRequest->validated();
-                $user->student()->update($studentData);
+                $studentData = $request->validate([
+                    'studentGrade' => 'nullable|string|max:255',
+                    'studentAdmissionNo' => 'nullable|string|max:255',
+                ]);
+                $studentData['modifiedBy']    = Auth::user()->name;
+
+                $this->userStudentInterface->updateByUserId($id, $studentData);
+
                 break;
 
             case 'parent':
-                $parentData = $parentRequest->validated();
-                $user->parent()->update($parentData);
-                break;
+                $parentData = $request->validate([
+                    'studentAdmissionNo' => 'nullable|string|max:255',
+                    'parentContact' => 'nullable|string|max:15',
+                    'profession' => 'nullable|string|max:255',
+                    'relation' => 'nullable|string|max:255'
+                ]);
+                $parentData['modifiedBy']    = Auth::user()->name;
+                $this->userParentInterface->updateByUserId($id, $parentData);
 
-            default:
-                return response()->json(['message' => 'Invalid user type'], 400);
+                break;
         }
+
         return response()->json([
-            'message' => 'User Profile updated successfully!',
-        ]);
+            'message' => 'Profile updated successfully',
+        ], 200);
     }
 
     public function search(Request $request)

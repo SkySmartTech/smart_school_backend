@@ -64,18 +64,15 @@ class UserTeacherController extends Controller
 
         $user = $this->userInterface->create($userData);
 
-        $teacherData = [
-            'userId'        => $user->id,
-            'userType'      => $user->userType,
-            'teacherGrades' => $validatedData['teacherGrades'],
-            'teacherClass'  => $validatedData['teacherClass'],
-            'subjects'      => $validatedData['subjects'],
-            'staffNo'       => $validatedData['staffNo'],
-            'medium'        => $validatedData['medium'],
-            'modifiedBy'    => Auth::user()->name,
-        ];
+        if (!empty($validatedData['teacherData'])) {
+            foreach ($validatedData['teacherData'] as $teacher) {
+                $teacher['userId']     = $user->id;
+                $teacher['userType']   = $user->userType;
+                $teacher['modifiedBy'] = Auth::user()->name;
 
-        $this->userTeacherInterface->create($teacherData);
+                $this->userTeacherInterface->create($teacher);
+            }
+        }
 
         return response()->json([
             'message' => 'New teacher added successfully!',
@@ -114,18 +111,17 @@ class UserTeacherController extends Controller
 
         $this->userInterface->update($id, $userData);
 
+        $this->userTeacherInterface->deleteByUserId($id);
 
-        $teacherData = [
-            'userType'      => $validatedData['userType'],
-            'teacherGrades' => $validatedData['teacherGrades'],
-            'teacherClass'  => $validatedData['teacherClass'],
-            'subjects'      => $validatedData['subjects'],
-            'staffNo'       => $validatedData['staffNo'],
-            'medium'        => $validatedData['medium'],
-            'modifiedBy'    => Auth::user()->name,
-        ];
+        if (!empty($validatedData['teacherData'])) {
+            foreach ($validatedData['teacherData'] as $teacher) {
+                $teacher['userId']     = $id;
+                $teacher['userType']   = $userData['userType'];
+                $teacher['modifiedBy'] = Auth::user()->name;
 
-        $this->userTeacherInterface->updateByUserId($id, $teacherData);
+                $this->userTeacherInterface->create($teacher);
+            }
+        }
 
         return response()->json([
             'message' => 'User Teacher updated successfully!',
