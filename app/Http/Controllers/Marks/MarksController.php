@@ -32,12 +32,20 @@ class MarksController extends Controller
         ], 201);
     }
 
-    public function managementStaffReportData($year, $grade, $exam)
+    public function managementStaffReportData($year, $grade, $exam, $month)
     {
-        $subjectAverages = DB::table('marks')
+        // ---------------- Subject Averages ----------------
+        $subjectAveragesQuery = DB::table('marks')
+            ->where('status', true)
             ->where('year', $year)
             ->where('studentGrade', $grade)
-            ->where('term', $exam)
+            ->where('term', $exam);
+
+        if ($month !== "null") {   // ✅ only apply if not null
+            $subjectAveragesQuery->where('month', $month);
+        }
+
+        $subjectAverages = $subjectAveragesQuery
             ->select('subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
             ->groupBy('subject')
             ->get();
@@ -54,14 +62,22 @@ class MarksController extends Controller
             ];
         });
 
-        $classMarks = DB::table('marks')
+        // ---------------- Class Marks ----------------
+        $classMarksQuery = DB::table('marks')
+            ->where('status', true)
             ->where('year', $year)
             ->where('studentGrade', $grade)
-            ->where('term', $exam)
+            ->where('term', $exam);
+
+        if ($month !== "null") {   // ✅ only apply if not null
+            $classMarksQuery->where('month', $month);
+        }
+
+        $classMarks = $classMarksQuery
             ->select('studentClass', 'subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
             ->groupBy('studentClass', 'subject')
             ->get()
-            ->groupBy('studentClass') // Group by class in PHP
+            ->groupBy('studentClass')
             ->map(function ($items) {
                 $totalAverageSum = $items->sum('average_marks');
 
@@ -73,29 +89,36 @@ class MarksController extends Controller
                     return [
                         'subject' => $item->subject,
                         'average_mark' => $item->average_marks,
-                        'subject_percentage' => $subjectPercentage // Add percentage
+                        'subject_percentage' => $subjectPercentage
                     ];
                 });
             });
 
-        $overallSubjectAvg = DB::table('marks')
-                ->where('year', $year)
-                ->where('studentGrade', $grade)
-                ->where('term', $exam)
-                ->select('studentClass', 'subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
-                ->groupBy('studentClass', 'subject')
-                ->get()
-                ->groupBy('studentClass') // Group by class in PHP
-                ->map(function ($items) {
-                    $overallClassAverage = $items->avg('average_marks');
+        // ---------------- Overall Subject Average ----------------
+        $overallSubjectAvgQuery = DB::table('marks')
+            ->where('status', true)
+            ->where('year', $year)
+            ->where('studentGrade', $grade)
+            ->where('term', $exam);
 
-                        return [
-                            'overall_average' => $overallClassAverage
-                        ];
-                    });
+        if ($month !== "null") {   // ✅ only apply if not null
+            $overallSubjectAvgQuery->where('month', $month);
+        }
 
+        $overallSubjectAvg = $overallSubjectAvgQuery
+            ->select('studentClass', 'subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
+            ->groupBy('studentClass', 'subject')
+            ->get()
+            ->groupBy('studentClass')
+            ->map(function ($items) {
+                $overallClassAverage = $items->avg('average_marks');
 
+                return [
+                    'overall_average' => $overallClassAverage
+                ];
+            });
 
+        // ---------------- Response ----------------
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
             'class_subject_marks' => $classMarks,
@@ -103,22 +126,28 @@ class MarksController extends Controller
         ], 200);
     }
 
-    public function teacherReportData($startDate, $endDate, $grade, $class, $exam)
-    {
-        //$year = Carbon::parse(str_replace('.', '-', $endDate))->year;
 
+    public function teacherReportData($startDate, $endDate, $grade, $class, $exam, $month)
+    {
         $startYear = Carbon::parse(str_replace('.', '-', $startDate))->year;
         $endYear = Carbon::parse(str_replace('.', '-', $endDate))->year;
 
-        $subjectAverages = DB::table('marks')
+        // ---------------- Subject Averages ----------------
+        $subjectAveragesQuery = DB::table('marks')
             ->whereBetween('year', [$startYear, $endYear])
+            ->where('status', true)
             ->where('studentGrade', $grade)
             ->where('term', $exam)
-            ->where('studentClass', $class)
+            ->where('studentClass', $class);
+
+        if ($month !== "null") {   // ✅ apply month filter only if not null
+            $subjectAveragesQuery->where('month', $month);
+        }
+
+        $subjectAverages = $subjectAveragesQuery
             ->select('subject', DB::raw('ROUND(AVG(marks), 2) as average_marks'))
             ->groupBy('subject')
             ->get();
-
 
         $totalAverageSum = $subjectAverages->sum('average_marks');
         $subjectAveragesWithPercent = $subjectAverages->map(function ($item) use ($totalAverageSum) {
@@ -132,11 +161,19 @@ class MarksController extends Controller
             ];
         });
 
-        $yearlySubjectAverages = DB::table('marks')
+        // ---------------- Yearly Subject Averages ----------------
+        $yearlySubjectAveragesQuery = DB::table('marks')
             ->whereBetween('year', [$startYear, $endYear])
+            ->where('status', true)
             ->where('studentGrade', $grade)
             ->where('term', $exam)
-            ->where('studentClass', $class)
+            ->where('studentClass', $class);
+
+        if ($month !== "null") {   // ✅ apply month filter only if not null
+            $yearlySubjectAveragesQuery->where('month', $month);
+        }
+
+        $yearlySubjectAverages = $yearlySubjectAveragesQuery
             ->select(
                 'year',
                 'subject',
@@ -168,11 +205,19 @@ class MarksController extends Controller
             })
             ->values();
 
-        $studentMarks = DB::table('marks')
+        // ---------------- Student Marks ----------------
+        $studentMarksQuery = DB::table('marks')
             ->where('year', $endYear)
+            ->where('status', true)
             ->where('studentGrade', $grade)
             ->where('term', $exam)
-            ->where('studentClass', $class)
+            ->where('studentClass', $class);
+
+        if ($month !== "null") {   // ✅ apply month filter only if not null
+            $studentMarksQuery->where('month', $month);
+        }
+
+        $studentMarks = $studentMarksQuery
             ->select(
                 'studentName',
                 'subject',
@@ -206,6 +251,7 @@ class MarksController extends Controller
                 return $item;
             });
 
+        // ---------------- Final Response ----------------
         return response()->json([
             'subject_marks' => $subjectAveragesWithPercent,
             'start_year' => $startYear,
