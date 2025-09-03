@@ -26,4 +26,9 @@ class UserTeacherRepository extends BaseRepository implements UserTeacherInterfa
     {
         return UserTeacher::where('userId', $userId)->update($data);
     }
+
+    public function deleteByUserId($userId)
+    {
+        return UserTeacher::where('userId', $userId)->delete();
+    }
 }

@@ -35,11 +35,13 @@ class UserTeacherCreateRequest extends FormRequest
             'photo' => 'nullable|string|max:255',
             'userRole' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
-            'teacherGrades' => 'nullable|array',
-            'teacherClass' => 'nullable|array',
-            'subjects' => 'nullable|array',
-            'staffNo' => 'nullable|string|max:255',
-            'medium' => 'nullable|array'
+
+            'teacherData'           => 'required|array',
+            'teacherData.*.teacherGrade'  => 'nullable|string|max:255',
+            'teacherData.*.teacherClass'  => 'nullable|string|max:255',
+            'teacherData.*.subject'       => 'nullable|string|max:255',
+            'teacherData.*.medium'        => 'nullable|string|max:255',
+            'teacherData.*.staffNo'       => 'nullable|string|max:255',
         ];
     }
 }
