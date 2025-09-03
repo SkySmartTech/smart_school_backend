@@ -119,7 +119,7 @@ class UserStudentController extends Controller
         $this->userInterface->update($id, $userData);
 
 
-        $teacherData = [
+        $studentData = [
             'userType'      => $validatedData['userType'],
             'studentGrade' => $validatedData['studentGrade'],
             'medium'  => $validatedData['medium'],
@@ -130,7 +130,7 @@ class UserStudentController extends Controller
             'modifiedBy'    => Auth::user()->name,
         ];
 
-        $this->userStudentInterface->updateByUserId($id, $teacherData);
+        $this->userStudentInterface->updateByUserId($id, $studentData);
 
         return response()->json([
             'message' => 'User Student updated successfully!',

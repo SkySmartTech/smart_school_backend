@@ -81,6 +81,7 @@ class UserParentController extends Controller
             'userId'        => $user->id,
             'userType'      => $user->userType,
             'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
+            'parentContact' => $validatedData['parentContact'],
             'profession'  => $validatedData['profession'],
             'relation'      => $validatedData['relation'],
         ];
@@ -117,6 +118,7 @@ class UserParentController extends Controller
         $parentData = [
             'userType'      => $validatedData['userType'],
             'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
+            'parentContact' => $validatedData['parentContact'],
             'profession'  => $validatedData['profession'],
             'relation'      => $validatedData['relation'],
         ];

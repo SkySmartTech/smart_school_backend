@@ -23,4 +23,9 @@ class UserParent extends Model
         return $this->hasOne(UserStudent::class, 'studentAdmissionNo', 'studentAdmissionNo');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId', 'id');
+    }
+
 }
