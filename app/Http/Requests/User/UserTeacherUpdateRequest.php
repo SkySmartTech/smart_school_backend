@@ -24,21 +24,23 @@ class UserTeacherUpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'address' => 'nullable|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|max:255',
             'birthDay' => 'nullable|date',
             'contact' => 'nullable|string|max:15',
-            'userType' => 'nullable|string|max:255',
+            'userType' => 'required|string|max:255',
             'gender' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
-            'username' => 'nullable|string|max:255',
+            'username' => 'required|string|max:255',
             'photo' => 'nullable|string|max:255',
             'userRole' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
-            'teacherGrades' => 'nullable|array',
-            'teacherClass' => 'nullable|array',
-            'subjects' => 'nullable|array',
-            'staffNo' => 'nullable|string|max:255',
-            'medium' => 'nullable|array'
+
+            'teacherData'           => 'required|array',
+            'teacherData.*.teacherGrade'  => 'nullable|string|max:255',
+            'teacherData.*.teacherClass'  => 'nullable|string|max:255',
+            'teacherData.*.subject'       => 'nullable|string|max:255',
+            'teacherData.*.medium'        => 'nullable|string|max:255',
+            'teacherData.*.staffNo'       => 'nullable|string|max:255',
         ];
     }
 }
