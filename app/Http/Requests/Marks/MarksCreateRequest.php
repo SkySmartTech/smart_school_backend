@@ -33,6 +33,7 @@ class MarksCreateRequest extends FormRequest
             'marks.*.subject'           => 'required|string|max:255',
             'marks.*.medium'            => 'nullable|string|max:255',
             'marks.*.marks'             => 'required|integer|max:100',
+            'marks.*.status'            => 'nullable|boolean',
             'marks.*.marksGrade'        => 'nullable|string|max:255',
         ];
     }

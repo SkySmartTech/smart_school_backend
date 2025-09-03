@@ -20,6 +20,7 @@ class Marks extends Model
         'subject',
         'medium',
         'marks',
+        'status',
         'marksGrade',
     ];
 
