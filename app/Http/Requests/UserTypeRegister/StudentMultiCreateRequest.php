@@ -38,7 +38,6 @@ class StudentMultiCreateRequest extends FormRequest
             'studentData.*.status'              => 'nullable|boolean',
             'studentData.*.studentGrade'        => 'nullable|string|max:255',
             'studentData.*.studentClass'        => 'nullable|string|max:255',
-            'studentData.*.subject'             => 'nullable|string|max:255',
             'studentData.*.medium'              => 'nullable|string|max:255',
             'studentData.*.studentAdmissionNo'  => 'nullable|string|max:255',
         ];
