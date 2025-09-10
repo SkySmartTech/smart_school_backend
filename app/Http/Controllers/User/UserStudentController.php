@@ -125,8 +125,6 @@ class UserStudentController extends Controller
             'medium'  => $validatedData['medium'],
             'studentClass'      => $validatedData['studentClass'],
             'studentAdmissionNo'       => $validatedData['studentAdmissionNo'],
-            'parentNo'        => $validatedData['parentNo'],
-            'parentProfession' => $validatedData['parentProfession'],
             'modifiedBy'    => Auth::user()->name,
         ];
 
