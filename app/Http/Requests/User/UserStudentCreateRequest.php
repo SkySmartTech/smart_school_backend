@@ -39,8 +39,6 @@ class UserStudentCreateRequest extends FormRequest
             'medium' => 'nullable|string|max:255',
             'studentClass' => 'nullable|string|max:255',
             'studentAdmissionNo' => 'nullable|string|max:255',
-            'parentNo' => 'nullable|string|max:255',
-            'parentProfession' => 'nullable|string|max:255',
         ];
     }
 }
