@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\UserRegisterController;
+use App\Http\Controllers\ClassTeacher\ClassTeacherController;
 use App\Http\Controllers\Grade\GradeController;
 use App\Http\Controllers\GradeClass\GradeClassController;
 use App\Http\Controllers\Marks\MarksController;
@@ -17,7 +18,6 @@ use App\Http\Controllers\User\UserTeacherController;
 use App\Http\Controllers\UserAccess\UserAccessController;
 use App\Http\Controllers\UserRole\UserRoleController;
 use App\Http\Controllers\UserType\UserTypeController;
-use App\Http\Controllers\UserTypeRegister\UserTypeRegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user-register', [UserRegisterController::class, 'store']);
@@ -105,6 +105,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('grade-class/{id}/show', [GradeClassController::class, 'show']);
     Route::post('grade-class/{id}/update', [GradeClassController::class, 'update']);
     Route::delete('grade-class/{id}/delete', [GradeClassController::class, 'destroy']);
+
+    Route::post('class-teacher-create', [ClassTeacherController::class, 'store']);
+    Route::get('class-teachers', [ClassTeacherController::class, 'index']);
+    Route::get('class-teacher/{id}/show', [ClassTeacherController::class, 'show']);
+    Route::post('class-teacher/{id}/update', [ClassTeacherController::class, 'update']);
+    Route::delete('class-teacher/{id}/delete', [ClassTeacherController::class, 'destroy']);
 
     Route::get('search-admission-data/{grade}/{class}', [UserStudentController::class, 'searchAdmissionData']);
     Route::post('add-marks', [MarksController::class, 'store']);

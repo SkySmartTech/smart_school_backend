@@ -68,7 +68,7 @@ class UserController extends Controller
                 break;
 
             case 'parent':
-                $parentData = $user->userParent()->with('student.user')->first();
+                $parentData = $user->parent()->with('student.user')->first();
 
                 if ($parentData && $parentData->student) {
                     $userData['parent_data'] = [
@@ -199,27 +199,6 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $keyword = $request->input('keyword');
-
-        $users = $this->userInterface->search($keyword);
-        $admissions = $this->userStudentInterface->search($keyword);
-
-        $userData = $users->map(function ($user) {
-            $userArray = $user->toArray();
-
-            return $userArray;
-        });
-
-
-        $admissionData = $admissions->map(function ($user) {
-            $userArray = $user->toArray();
-
-            return $userArray;
-        });
-
-        return response()->json([
-            'users' => $userData,
-            'admissions' => $admissionData,
-        ], 200);
+        
     }
 }
