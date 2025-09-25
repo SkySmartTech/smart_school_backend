@@ -228,5 +228,31 @@ class UserStudentController extends Controller
         ], 201);
     }
 
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $query = User::where('userType', 'student')->with('student');
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                ->orWhere('email', 'like', '%' . $keyword . '%')
+                ->orWhere('gender', 'like', '%' . $keyword . '%')
+                ->orWhere('username', 'like', '%' . $keyword . '%')
+                ->orWhere('address', 'like', '%' . $keyword . '%')
+                ->orWhereHas('student', function ($subQuery) use ($keyword) {
+                    $subQuery->where('studentAdmissionNo', 'like', '%' . $keyword . '%')
+                            ->orWhere('studentGrade', 'like', '%' . $keyword . '%')
+                            ->orWhere('medium', 'like', '%' . $keyword . '%')
+                            ->orWhere('studentClass', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $students = $query->get();
+
+        return response()->json($students, 200);
+    }
 
 }

@@ -27,7 +27,7 @@ class UserStudentUpdateRequest extends FormRequest
             'email' => 'required|email',
             'birthDay' => 'nullable|date',
             'contact' => 'nullable|string|max:15',
-            'userType' => 'required|string|max:255',
+            'userType' => 'nullable|string|max:255',
             'gender' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             'username' => 'required|string|max:255',
@@ -38,7 +38,7 @@ class UserStudentUpdateRequest extends FormRequest
             'medium' => 'nullable|string|max:255',
             'studentClass' => 'nullable|string|max:255',
             'studentAdmissionNo' => 'nullable|string|max:255',
-            
+
         ];
     }
 }

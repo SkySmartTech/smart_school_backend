@@ -139,4 +139,60 @@ class UserTeacherController extends Controller
             'message' => 'User deactivated successfully.',
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $query = User::where('userType', 'teacher')->with('teacher');
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                ->orWhere('email', 'like', '%' . $keyword . '%')
+                ->orWhere('gender', 'like', '%' . $keyword . '%')
+                ->orWhere('username', 'like', '%' . $keyword . '%')
+                ->orWhere('address', 'like', '%' . $keyword . '%')
+                ->orWhereHas('teacher', function ($subQuery) use ($keyword) {
+                    $subQuery->where('teacherGrade', 'like', '%' . $keyword . '%')
+                            ->orWhere('teacherClass', 'like', '%' . $keyword . '%')
+                            ->orWhere('medium', 'like', '%' . $keyword . '%')
+                            ->orWhere('staffNo', 'like', '%' . $keyword . '%')
+                            ->orWhere('subject', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $teachers = $query->get();
+
+        return response()->json($teachers, 200);
+    }
+
+    public function showClassTeachers($grade, $class, Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $query = User::where('userType', 'teacher')
+            ->with('teacher')
+            ->whereHas('teacher', function ($q) use ($grade, $class) {
+                $q->where('teacherGrade', $grade)
+                ->where('teacherClass', $class);
+            });
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                ->orWhere('email', 'like', '%' . $keyword . '%')
+                ->orWhereHas('teacher', function ($sub) use ($keyword) {
+                    $sub->where('staffNo', 'like', '%' . $keyword . '%')
+                    ->orWhere('subject', 'like', '%' . $keyword . '%')
+                    ->orWhere('medium', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $teachers = $query->get();
+
+        return response()->json($teachers, 200);
+    }
 }
