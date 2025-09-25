@@ -67,10 +67,10 @@ class UserParentController extends Controller
             'contact'   => $validatedData['contact'],
             'userType'  => $validatedData['userType'],
             'gender'    => $validatedData['gender'],
-            'location'  => $validatedData['location'],
+            'location'  => $validatedData['location'] ?? null,
             'username'  => $validatedData['username'],
             'password'  => $validatedData['password'],
-            'photo'     => $validatedData['photo'],
+            'photo'     => $validatedData['photo'] ?? null,
             'userRole'  => $validatedData['userRole'],
             'status'    => $validatedData['status'],
         ];
@@ -105,9 +105,9 @@ class UserParentController extends Controller
             'contact'   => $validatedData['contact'],
             'userType'  => $validatedData['userType'],
             'gender'    => $validatedData['gender'],
-            'location'  => $validatedData['location'],
+            'location'  => $validatedData['location'] ?? null,
             'username'  => $validatedData['username'],
-            'photo'     => $validatedData['photo'],
+            'photo'     => $validatedData['photo'] ?? null,
             'userRole'  => $validatedData['userRole'],
             'status'    => $validatedData['status'],
         ];
@@ -121,6 +121,7 @@ class UserParentController extends Controller
             'parentContact' => $validatedData['parentContact'],
             'profession'  => $validatedData['profession'],
             'relation'      => $validatedData['relation'],
+            'modifiedBy'    => Auth::user()->name,
         ];
 
         $this->userParentInterface->updateByUserId($id, $parentData);
@@ -140,5 +141,32 @@ class UserParentController extends Controller
         return response()->json([
             'message' => 'User deactivated successfully.',
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $query = User::where('userType', 'parent')->with('parent');
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                ->orWhere('email', 'like', '%' . $keyword . '%')
+                ->orWhere('gender', 'like', '%' . $keyword . '%')
+                ->orWhere('username', 'like', '%' . $keyword . '%')
+                ->orWhere('address', 'like', '%' . $keyword . '%')
+                ->orWhereHas('parent', function ($subQuery) use ($keyword) {
+                    $subQuery->where('studentAdmissionNo', 'like', '%' . $keyword . '%')
+                            ->orWhere('profession', 'like', '%' . $keyword . '%')
+                            ->orWhere('relation', 'like', '%' . $keyword . '%')
+                            ->orWhere('parentContact', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $parents = $query->get();
+
+        return response()->json($parents, 200);
     }
 }
