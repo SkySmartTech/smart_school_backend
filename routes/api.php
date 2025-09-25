@@ -34,23 +34,25 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('user', [UserController::class, 'show']);
     Route::post('user/{id}/profile-update', [UserController::class, 'profileUpdate']);
-    Route::get('user/search', [UserController::class, 'search']);
 
     Route::post('add-new-teacher', [UserTeacherController::class, 'create']);
     Route::get('all-teachers', [UserTeacherController::class, 'showTeachers']);
     Route::post('user-teacher/{id}/update', [UserTeacherController::class, 'update']);
     Route::post('user-teacher/{id}/status-update', [UserTeacherController::class, 'updateStatus']);
+    Route::get('teacher/search', [UserTeacherController::class, 'search']);
 
     Route::post('add-new-student', [UserStudentController::class, 'create']);
     Route::post('add-new-students', [UserStudentController::class, 'multiCreate']);
     Route::get('all-students', [UserStudentController::class, 'showStudents']);
     Route::post('user-student/{id}/update', [UserStudentController::class, 'update']);
     Route::post('user-student/{id}/status-update', [UserStudentController::class, 'updateStatus']);
+    Route::get('student/search', [UserStudentController::class, 'search']);
 
     Route::post('add-new-parent', [UserParentController::class, 'create']);
     Route::get('all-parents', [UserParentController::class, 'showParents']);
     Route::post('user-parent/{id}/update', [UserParentController::class, 'update']);
     Route::post('user-parent/{id}/status-update', [UserParentController::class, 'updateStatus']);
+    Route::get('parent/search', [UserParentController::class, 'search']);
 
     Route::post('add-new-user-role', [UserRoleController::class, 'store']);
     Route::get('user-roles', [UserRoleController::class, 'index']);
@@ -111,6 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('class-teacher/{id}/show', [ClassTeacherController::class, 'show']);
     Route::post('class-teacher/{id}/update', [ClassTeacherController::class, 'update']);
     Route::delete('class-teacher/{id}/delete', [ClassTeacherController::class, 'destroy']);
+    Route::get('teachers/{grade}/{class}', [UserTeacherController::class, 'showClassTeachers']);
 
     Route::get('search-admission-data/{grade}/{class}', [UserStudentController::class, 'searchAdmissionData']);
     Route::post('add-marks', [MarksController::class, 'store']);
