@@ -22,20 +22,20 @@ class UserTeacherUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'nullable|email|max:255',
             'birthDay' => 'nullable|date',
             'contact' => 'nullable|string|max:15',
             'userType' => 'nullable|string|max:255',
             'gender' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
-            'username' => 'required|string|max:255',
+            'username' => 'nullable|string|max:255',
             'photo' => 'nullable|string|max:255',
             'userRole' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
 
-            'teacherData'           => 'required|array',
+            'teacherData'           => 'nullable|array',
             'teacherData.*.teacherGrade'  => 'nullable|string|max:255',
             'teacherData.*.teacherClass'  => 'nullable|string|max:255',
             'teacherData.*.subject'       => 'nullable|string|max:255',
