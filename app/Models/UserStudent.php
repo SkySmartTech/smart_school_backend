@@ -14,6 +14,7 @@ class UserStudent extends Model
         'medium',
         'studentClass',
         'studentAdmissionNo',
+        'year',
         'parentNo',
         'parentProfession',
         'userType',
