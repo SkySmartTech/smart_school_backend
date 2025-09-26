@@ -47,19 +47,19 @@ class UserTeacherController extends Controller
         $validatedData['password'] = Hash::make($validatedData['password']);
 
         $userData = [
-            'name'      => $validatedData['name'],
-            'address'   => $validatedData['address'],
-            'email'     => $validatedData['email'],
-            'birthDay'  => $validatedData['birthDay'],
-            'contact'   => $validatedData['contact'],
-            'userType'  => $validatedData['userType'],
-            'gender'    => $validatedData['gender'],
-            'location'  => $validatedData['location'],
-            'username'  => $validatedData['username'],
-            'password'  => $validatedData['password'],
-            'photo'     => $validatedData['photo'],
-            'userRole'  => $validatedData['userRole'],
-            'status'    => $validatedData['status'], // Default to true if not provided
+            'name'      => $validatedData['name'] ?? null,
+            'address'   => $validatedData['address'] ?? null,
+            'email'     => $validatedData['email'] ?? null,
+            'birthDay'  => $validatedData['birthDay'] ?? null,
+            'contact'   => $validatedData['contact'] ?? null,
+            'userType'  => $validatedData['userType'] ?? null,
+            'gender'    => $validatedData['gender'] ?? null,
+            'location'  => $validatedData['location'] ?? null,
+            'username'  => $validatedData['username'] ?? null,
+            'password'  => $validatedData['password'] ?? null,
+            'photo'     => $validatedData['photo'] ?? null,
+            'userRole'  => $validatedData['userRole'] ?? null,
+            'status'    => $validatedData['status'] ?? null,
         ];
 
         $user = $this->userInterface->create($userData);
@@ -95,18 +95,18 @@ class UserTeacherController extends Controller
         $validatedData = $request->validated();
 
         $userData = [
-            'name'      => $validatedData['name'],
-            'address'   => $validatedData['address'],
-            'email'     => $validatedData['email'],
-            'birthDay'  => $validatedData['birthDay'],
-            'contact'   => $validatedData['contact'],
-            'userType'  => $validatedData['userType'],
-            'gender'    => $validatedData['gender'],
-            'location'  => $validatedData['location'],
-            'username'  => $validatedData['username'],
-            'photo'     => $validatedData['photo'],
-            'userRole'  => $validatedData['userRole'],
-            'status'    => $validatedData['status'],
+            'name'      => $validatedData['name'] ?? null,
+            'address'   => $validatedData['address'] ?? null,
+            'email'     => $validatedData['email'] ?? null,
+            'birthDay'  => $validatedData['birthDay'] ?? null,
+            'contact'   => $validatedData['contact'] ?? null,
+            'userType'  => $validatedData['userType'] ?? null,
+            'gender'    => $validatedData['gender'] ?? null,
+            'location'  => $validatedData['location'] ?? null,
+            'username'  => $validatedData['username'] ?? null,
+            'photo'     => $validatedData['photo'] ?? null,
+            'userRole'  => $validatedData['userRole'] ?? null,
+            'status'    => $validatedData['status'] ?? null,
         ];
 
         $this->userInterface->update($id, $userData);
