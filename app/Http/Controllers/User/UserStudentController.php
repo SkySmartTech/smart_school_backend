@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StudentsGradeUpdateRequest;
 use App\Http\Requests\User\UserStudentCreateRequest;
 use App\Http\Requests\User\UserStudentUpdateRequest;
 use App\Http\Requests\UserTypeRegister\StudentMultiCreateRequest;
 use App\Http\Requests\UserTypeRegister\UserStudentRegisterRequest;
 use App\Models\User;
+use App\Models\UserStudent;
 use App\Repositories\All\User\UserInterface;
 use App\Repositories\All\UserStudent\UserStudentInterface;
 use Illuminate\Support\Facades\Auth;
@@ -255,4 +257,80 @@ class UserStudentController extends Controller
         return response()->json($students, 200);
     }
 
+    public function searchStudents($year, $grade, $class, Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $query = User::where('userType', 'student')
+            ->with('student')
+            ->whereHas('student', function ($q) use ($grade, $class, $year) {
+                $q->where('studentGrade', $grade)
+                ->where('year', $year)
+                ->where('studentClass', $class);
+            });
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                ->orWhere('email', 'like', '%' . $keyword . '%')
+                ->orWhereHas('student', function ($sub) use ($keyword) {
+                    $sub->where('studentAdmissionNo', 'like', '%' . $keyword . '%')
+                    ->orWhere('medium', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $students = $query->get();
+
+        return response()->json($students, 200);
+    }
+
+    public function searchGradeStudents($year, $grade, $class, Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $query = User::where('userType', 'student')
+            ->with('student')
+            ->whereHas('student', function ($q) use ($grade, $class, $year) {
+                $q->where('studentGrade', $grade)
+                ->where('studentClass', $class)
+                ->where('year', $year);
+            });
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                ->orWhereHas('student', function ($sub) use ($keyword) {
+                    $sub->where('studentAdmissionNo', 'like', '%' . $keyword . '%')
+                    ->orWhere('medium', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $students = $query->get();
+
+        return response()->json($students, 200);
+    }
+
+    public function updateStudentsGrade(StudentsGradeUpdateRequest $request)
+    {
+        $validated = $request->validated();
+
+        foreach ($validated['students'] as $studentData) {
+            $student = UserStudent::where('studentAdmissionNo', $studentData['studentAdmissionNo'])
+                ->first();
+
+            if ($student) {
+                $student->update([
+                    'year' => $studentData['year'],
+                    'studentGrade' => $studentData['studentGrade'],
+                    'studentClass' => $studentData['studentClass'],
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Students updated successfully',
+        ], 200);
+    }
 }
