@@ -173,7 +173,6 @@ class UserTeacherController extends Controller
         $keyword = $request->input('keyword');
 
         $query = User::where('userType', 'teacher')
-            ->with('teacher')
             ->whereHas('teacher', function ($q) use ($grade, $class) {
                 $q->where('teacherGrade', $grade)
                 ->where('teacherClass', $class);
@@ -185,14 +184,30 @@ class UserTeacherController extends Controller
                 ->orWhere('email', 'like', '%' . $keyword . '%')
                 ->orWhereHas('teacher', function ($sub) use ($keyword) {
                     $sub->where('staffNo', 'like', '%' . $keyword . '%')
-                    ->orWhere('subject', 'like', '%' . $keyword . '%')
-                    ->orWhere('medium', 'like', '%' . $keyword . '%');
+                        ->orWhere('subject', 'like', '%' . $keyword . '%')
+                        ->orWhere('medium', 'like', '%' . $keyword . '%');
                 });
             });
         }
 
-        $teachers = $query->get();
+        $teachers = $query->with(['teacher' => function ($q) use ($grade, $class) {
+            $q->where('teacherGrade', $grade)
+            ->where('teacherClass', $class)
+            ->select('id','staffNo','teacherGrade','teacherClass','userId');
+        }])->get(['id','name']);
 
-        return response()->json($teachers, 200);
+        // Map into clean structured array
+        $result = $teachers->flatMap(function ($teacher) {
+            return $teacher->teacher->map(function ($t) use ($teacher) {
+                return [
+                    'staffNo' => $t->staffNo,
+                    'name'    => $teacher->name,
+                    'teacherGrade'   => $t->teacherGrade,
+                    'teacherClass'   => $t->teacherClass,
+                ];
+            });
+        })->values();
+
+        return response()->json($result, 200);
     }
 }

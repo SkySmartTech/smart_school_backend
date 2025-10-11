@@ -22,10 +22,13 @@ class UserParentRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'studentAdmissionNo' => 'nullable|string|max:255',
-            'parentContact' => 'nullable|string|max:15',
-            'profession' => 'nullable|string|max:255',
-            'relation' => 'nullable|string|max:255'
+            'parentData'           => 'required|array',
+            'parentData.*.studentAdmissionNo'  => 'nullable|string|max:255',
+            'parentData.*.parentContact'  => 'nullable|string|max:15',
+            'parentData.*.profession'       => 'nullable|string|max:255',
+            'parentData.*.relation'        => 'nullable|string|max:255',
+            'parentData.*.userId'       => 'nullable|string|max:255',
+            'parentData.*.userType'       => 'nullable|string|max:255',
         ];
     }
 }

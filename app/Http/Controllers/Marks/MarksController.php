@@ -261,15 +261,15 @@ class MarksController extends Controller
         ], 200);
     }
 
-    public function parentReportData(Request $request, $startDate, $endDate, $exam, $month, $studentGrade, $studentClass)
+    public function parentReportData(Request $request, $studentAdmissionNo, $startDate, $endDate, $exam, $month, $studentGrade, $studentClass)
     {
-        $admissionNo = $request->query('admission_no');
+
 
         $startYear = Carbon::parse(str_replace('.', '-', $startDate))->year;
         $endYear = Carbon::parse(str_replace('.', '-', $endDate))->year;
 
         $termYearlyAverages = DB::table('marks')
-            ->where('studentAdmissionNo', $admissionNo)
+            ->where('studentAdmissionNo', $studentAdmissionNo)
             ->whereBetween('year', [$startYear, $endYear])
             ->select(
                 'year',
@@ -296,7 +296,7 @@ class MarksController extends Controller
 
         // Subject averages
         $subjectAveragesQuery = DB::table('marks')
-            ->where('studentAdmissionNo', $admissionNo)
+            ->where('studentAdmissionNo', $studentAdmissionNo)
             ->where('term', $exam);
 
         if ($month !== "null") {   // ✅ only apply if not null
@@ -322,7 +322,7 @@ class MarksController extends Controller
 
         // Subject yearly marks
         $subjectYearlyMarks = DB::table('marks')
-            ->where('studentAdmissionNo', $admissionNo)
+            ->where('studentAdmissionNo', $studentAdmissionNo)
             ->whereBetween('year', [$startYear, $endYear])
             ->select(
                 'year',
@@ -371,7 +371,7 @@ class MarksController extends Controller
 
         // Marks & Grades
         $marksAndGradesQuery = DB::table('marks')
-            ->where('studentAdmissionNo', $admissionNo)
+            ->where('studentAdmissionNo', $studentAdmissionNo)
             ->where('year', $endYear)
             ->where('term', $exam);
 

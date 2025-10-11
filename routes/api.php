@@ -120,7 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('management-staff-report/{year}/{grade}/{exam}/{month}', [MarksController::class, 'managementStaffReportData']);
     Route::get('teacher-report-data/{start_date}/{end_date}/{grade}/{class}/{exam}/{month}', [MarksController::class, 'teacherReportData']);
-    Route::get('parent-report-data/{start_date}/{end_date}/{exam}/{month}/{student_grade}/{student_class}', [MarksController::class, 'parentReportData']);
+    Route::get('parent-report-data/{studentAdmissionNo}/{start_date}/{end_date}/{exam}/{month}/{student_grade}/{student_class}', [MarksController::class, 'parentReportData']);
 
     Route::get('class-students/{year}/{grade}/{class}', [UserStudentController::class, 'searchStudents']);
     Route::get('grade-students/{year}/{grade}/{class}', [UserStudentController::class, 'searchGradeStudents']);

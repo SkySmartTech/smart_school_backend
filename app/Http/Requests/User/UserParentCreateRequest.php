@@ -35,10 +35,12 @@ class UserParentCreateRequest extends FormRequest
             'photo' => 'nullable|string|max:255',
             'userRole' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
-            'studentAdmissionNo' => 'nullable|string|max:255',
-            'parentContact' => 'nullable|string|max:15',
-            'profession' => 'nullable|string|max:255',
-            'relation' => 'nullable|string|max:255'
+
+            'parentData'           => 'required|array',
+            'parentData.*.studentAdmissionNo'  => 'nullable|string|max:255',
+            'parentData.*.parentContact'  => 'nullable|string|max:15',
+            'parentData.*.profession'       => 'nullable|string|max:255',
+            'parentData.*.relation'        => 'nullable|string|max:255',
         ];
     }
 }
