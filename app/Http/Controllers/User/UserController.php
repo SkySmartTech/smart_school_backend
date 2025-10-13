@@ -68,17 +68,27 @@ class UserController extends Controller
                 break;
 
             case 'parent':
-                $parentData = $user->parent()->with('student.user')->first();
+                $parentRecords = $user->parent()->with('students.user')->get();
 
-                if ($parentData && $parentData->student) {
-                    $userData['parent_data'] = [
-                        'parent_info' => $parentData,
-                        'student_info' => [
-                            'name'  => $parentData->student->user->name ?? null, // if linked to User
-                            'grade' => $parentData->student->studentGrade,
-                            'class' => $parentData->student->studentClass,
-                        ]
-                    ];
+                if ($parentRecords->isNotEmpty()) {
+                    $userData['parent_data'] = $parentRecords->map(function ($parentRecord) {
+                        return [
+                            'parent_info' => [
+                                'id' => $parentRecord->id,
+                                'profession' => $parentRecord->profession,
+                                'relation' => $parentRecord->relation,
+                                'parent_contact' => $parentRecord->parentContact,
+                            ],
+                            'students_info' => $parentRecord->students->map(function ($student) {
+                                return [
+                                    'name' => $student->user->name ?? null,
+                                    'studentAdmissionNo' => $student->studentAdmissionNo,
+                                    'grade' => $student->studentGrade,
+                                    'class' => $student->studentClass,
+                                ];
+                            }),
+                        ];
+                    });
                 } else {
                     $userData['parent_data'] = null;
                 }
@@ -199,6 +209,6 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        
+
     }
 }

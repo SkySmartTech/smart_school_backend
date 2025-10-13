@@ -18,9 +18,9 @@ class UserParent extends Model
         'userType',
     ];
 
-    public function student()
+    public function students()
     {
-        return $this->hasOne(UserStudent::class, 'studentAdmissionNo', 'studentAdmissionNo');
+        return $this->hasMany(UserStudent::class, 'studentAdmissionNo', 'studentAdmissionNo');
     }
 
     public function user()

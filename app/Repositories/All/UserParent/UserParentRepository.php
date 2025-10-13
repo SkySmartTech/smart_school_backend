@@ -26,4 +26,9 @@ class UserParentRepository extends BaseRepository implements UserParentInterface
     {
         return UserParent::where('userId', $userId)->update($data);
     }
+
+    public function deleteByUserId($userId)
+    {
+        return UserParent::where('userId', $userId)->delete();
+    }
 }
