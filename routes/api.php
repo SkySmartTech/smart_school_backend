@@ -125,4 +125,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('class-students/{year}/{grade}/{class}', [UserStudentController::class, 'searchStudents']);
     Route::get('grade-students/{year}/{grade}/{class}', [UserStudentController::class, 'searchGradeStudents']);
     Route::post('students-grade-update', [UserStudentController::class, 'updateStudentsGrade']);
+
+
+
+    Route::post('abc', [UserStudentController::class, 'updateStudentsGrade']);
 });
