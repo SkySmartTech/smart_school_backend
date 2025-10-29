@@ -26,7 +26,7 @@ class UserTeacherUpdateRequest extends FormRequest
             'address' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'birthDay' => 'nullable|date',
-            'contact' => 'nullable|string|max:15',
+            'contact' => 'nullable|string|min:10|max:10',
             'userType' => 'nullable|string|max:255',
             'gender' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',

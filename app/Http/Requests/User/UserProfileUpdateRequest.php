@@ -26,7 +26,7 @@ class UserProfileUpdateRequest extends FormRequest
             'username'  => 'required|string|max:255',
             'email'     => 'required|email|max:255',
             'address'   => 'nullable|string|max:255',
-            'contact'   => 'nullable|string|max:255',
+            'contact'   => 'nullable|string|min:10|max:10',
         ];
     }
 }

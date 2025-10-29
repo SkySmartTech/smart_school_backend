@@ -23,7 +23,10 @@ class SubjectCreateRequest extends FormRequest
     {
         return [
             'subjectId' => 'nullable|string|max:255',
-            'subjectName' => 'required|string|max:255',
+            'grade' => 'nullable|string|max:255',
+            'class' => 'nullable|string|max:255',
+            'mainSubject' => 'required|string|max:255',
+            'subSubject' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
             'medium' => 'nullable|string|max:255',
         ];

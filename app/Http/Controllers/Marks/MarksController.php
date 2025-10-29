@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Marks;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Marks\MarksCreateRequest;
 use App\Models\Marks;
+use App\Models\UserStudent;
+use App\Models\UserTeacher;
 use App\Repositories\All\Marks\MarksInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +33,49 @@ class MarksController extends Controller
             'message' => 'Marks Created successfully!',
         ], 201);
     }
+
+    public function checkMarksStatus($studentYear, $grade, $examYear, $exam, $month)
+    {
+        $teachers = UserTeacher::with('user')
+            ->where('teacherGrade', $grade)
+            ->get(['id', 'staffNo', 'teacherGrade', 'subject', 'teacherClass', 'userId']);
+
+        $result = $teachers->map(function ($teacher) use ($studentYear, $examYear, $exam, $month) {
+
+            // ✅ Student count of that class (Grade + Class)
+            $studentCount = UserStudent::where('studentGrade', $teacher->teacherGrade)
+                ->where('studentClass', $teacher->teacherClass)
+                ->where('year', $studentYear)
+                ->count();
+
+            // ✅ Marks count of that subject (Grade + Class + Subject + Year + Term)
+            $marksQuery = Marks::where('studentGrade', $teacher->teacherGrade)
+                ->where('studentClass', $teacher->teacherClass)
+                ->where('subject', $teacher->subject)
+                ->where('year', $examYear)
+                ->where('term', $exam)
+                ->when($month, function ($query, $month) {
+                return $query->where('month', $month);
+                });
+
+            $givenMarksCount = $marksQuery->count();
+            $marksSubmitted = $givenMarksCount > 0;
+
+            return [
+                'staffNo' => $teacher->staffNo,
+                'teacher_name' => $teacher->user->name ?? null,
+                'teacherGrade' => $teacher->teacherGrade,
+                'subject' => $teacher->subject,
+                'teacherClass' => $teacher->teacherClass,
+                'marks_submitted' => $marksSubmitted,
+                'student_count' => $studentCount,
+                'given_marks_count' => $givenMarksCount,
+            ];
+        });
+
+        return response()->json($result, 200);
+    }
+
 
     public function managementStaffReportData($year, $grade, $exam, $month)
     {

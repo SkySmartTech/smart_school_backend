@@ -25,8 +25,8 @@ class UserStudentProfileUpdateRequest extends FormRequest
             'studentGrade' => 'required|string|max:255',
             'medium' => 'nullable|string|max:255',
             'studentClass' => 'nullable|string|max:255',
-            'studentAdmissionNo' => 'nullable|string|max:255',
-            'parentNo' => 'nullable|string|max:255',
+            'studentAdmissionNo' => 'nullable|string|min:5|max:10',
+            'parentNo' => 'nullable|string|min:10|max:10',
             'parentProfession' => 'nullable|string|max:255',
         ];
     }

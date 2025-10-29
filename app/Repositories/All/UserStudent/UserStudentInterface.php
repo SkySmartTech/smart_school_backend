@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 interface UserStudentInterface extends EloquentRepositoryInterface {
         public function updateByUserId($userId, array $data);
         public function search(string $keyword): Collection;
+        public function deleteByUserId($userId);
 
 
 }

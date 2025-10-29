@@ -140,6 +140,13 @@ class UserTeacherController extends Controller
         ]);
     }
 
+    public function teacherDelete($id)
+    {
+        $this->userInterface->deleteById($id);
+        $this->userTeacherInterface->deleteByUserId($id);
+        return response()->json();
+    }
+
     public function search(Request $request)
     {
         $keyword = $request->input('keyword');
