@@ -89,6 +89,13 @@ class UserParentController extends Controller
         ], 201);
     }
 
+    public function parentDelete($id)
+    {
+        $this->userInterface->deleteById($id);
+        $this->userParentInterface->deleteByUserId($id);
+        return response()->json();
+    }
+
     public function update(UserParentUpdateRequest $request, string $id)
     {
         $validatedData = $request->validated();

@@ -5,17 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+class PasswordOtp extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'subjectId',
-        'grade',
-        'class',
-        'mainSubject',
-        'subSubject',
-        'description',
-        'medium',
+        'contact',
+        'otp',
     ];
 }

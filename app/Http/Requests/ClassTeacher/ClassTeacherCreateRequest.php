@@ -22,9 +22,10 @@ class ClassTeacherCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'grade' => 'required|string|max:255',
-            'class' => 'required|string|max:255',
-            'classTeacher' => 'required|string|max:255',
+            'teacherGrade' => 'required|string|max:255',
+            'teacherClass' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'staffNo' => 'required|string|max:255',
         ];
     }
 }

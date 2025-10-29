@@ -27,7 +27,7 @@ class StudentMultiCreateRequest extends FormRequest
             'studentData.*.address'             => 'nullable|string|max:255',
             'studentData.*.email'               => 'required|email|unique:users,email|max:255',
             'studentData.*.birthDay'            => 'nullable|date',
-            'studentData.*.contact'             => 'nullable|string|max:15',
+            'studentData.*.contact'             => 'nullable|string|min:10|max:10',
             'studentData.*.userType'            => 'required|string|max:255',
             'studentData.*.gender'              => 'nullable|string|max:255',
             'studentData.*.location'            => 'nullable|string|max:255',
@@ -39,7 +39,7 @@ class StudentMultiCreateRequest extends FormRequest
             'studentData.*.studentGrade'        => 'nullable|string|max:255',
             'studentData.*.studentClass'        => 'nullable|string|max:255',
             'studentData.*.medium'              => 'nullable|string|max:255',
-            'studentData.*.studentAdmissionNo'  => 'nullable|string|max:255',
+            'studentData.*.studentAdmissionNo'  => 'nullable|string|min:5|max:10',
         ];
     }
 }

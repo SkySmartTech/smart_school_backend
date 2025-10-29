@@ -15,6 +15,7 @@ use App\Repositories\All\UserStudent\UserStudentInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UserStudentController extends Controller
 {
@@ -48,6 +49,13 @@ class UserStudentController extends Controller
         return response()->json([
             'message' => 'User Student registered successfully!',
         ], 201);
+    }
+
+    public function studentDelete($id)
+    {
+        $this->userInterface->deleteById($id);
+        $this->userStudentInterface->deleteByUserId($id);
+        return response()->json();
     }
 
     public function showStudents()
@@ -118,19 +126,32 @@ class UserStudentController extends Controller
             'status'    => $validatedData['status'],
         ];
 
+        // Update user
         $this->userInterface->update($id, $userData);
-
 
         $studentData = [
             'userType'      => $validatedData['userType'],
-            'studentGrade' => $validatedData['studentGrade'],
-            'medium'  => $validatedData['medium'],
-            'studentClass'      => $validatedData['studentClass'],
-            'studentAdmissionNo'       => $validatedData['studentAdmissionNo'],
+            'studentGrade'  => $validatedData['studentGrade'],
+            'medium'        => $validatedData['medium'],
+            'studentClass'  => $validatedData['studentClass'],
+            'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
             'modifiedBy'    => Auth::user()->name,
         ];
 
-        $this->userStudentInterface->updateByUserId($id, $studentData);
+        // Check if student record exists, if not create it
+        $existingStudent = UserStudent::where('userId', $id)->first();
+
+        if ($existingStudent) {
+            // Update existing student record
+            $this->userStudentInterface->updateByUserId($id, $studentData);
+        } else {
+            // Create new student record
+            $studentData['userId'] = $id;
+            $this->userStudentInterface->create($studentData);
+        }
+
+        // Return updated user with student relationship
+        $updatedUser = User::with('student')->find($id);
 
         return response()->json([
             'message' => 'User Student updated successfully!',
@@ -154,6 +175,7 @@ class UserStudentController extends Controller
         $keyword = $request->input('keyword');
 
         $admissionData = User::where('userType', 'student')
+            ->where('status', true)
             ->whereHas('student', function ($query) use ($grade, $class) {
                 $query->where('studentGrade', $grade)
                     ->where('studentClass', $class);
@@ -311,6 +333,35 @@ class UserStudentController extends Controller
 
         return response()->json($students, 200);
     }
+
+    public function searchClassStudents($grade, $class, Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $year = Carbon::now()->year;
+        $query = User::where('userType', 'student')
+            ->with('student')
+            ->whereHas('student', function ($q) use ($grade, $class, $year) {
+                $q->where('studentGrade', $grade)
+                ->where('year', $year)
+                ->where('studentClass', $class);
+            });
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                ->orWhere('email', 'like', '%' . $keyword . '%')
+                ->orWhereHas('student', function ($sub) use ($keyword) {
+                    $sub->where('studentAdmissionNo', 'like', '%' . $keyword . '%')
+                    ->orWhere('medium', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $students = $query->get();
+
+        return response()->json($students, 200);
+    }
+
 
     public function updateStudentsGrade(StudentsGradeUpdateRequest $request)
     {

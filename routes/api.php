@@ -18,14 +18,21 @@ use App\Http\Controllers\User\UserTeacherController;
 use App\Http\Controllers\UserAccess\UserAccessController;
 use App\Http\Controllers\UserRole\UserRoleController;
 use App\Http\Controllers\UserType\UserTypeController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
+
+
 
 Route::post('user-register', [UserRegisterController::class, 'store']);
 Route::delete('delete-register', [UserRegisterController::class, 'destroy']);
-
+Route::get('subjects', [SubjectController::class, 'index']);
 Route::post('user-teacher-register', [UserTeacherController::class, 'store']);
 Route::post('user-student-register', [UserStudentController::class, 'store']);
 Route::post('user-parent-register', [UserParentController::class, 'store']);
+
+Route::post('forgot-password/send-otp', [ForgotPasswordController::class, 'sendOtp']);
+Route::post('forgot-password/verify-otp', [ForgotPasswordController::class, 'verifyOtp']);
+Route::post('forgot-password/reset', [ForgotPasswordController::class, 'resetPassword']);
 
 Route::post('login', [LoginController::class, 'login']);
 
@@ -39,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('all-teachers', [UserTeacherController::class, 'showTeachers']);
     Route::post('user-teacher/{id}/update', [UserTeacherController::class, 'update']);
     Route::post('user-teacher/{id}/status-update', [UserTeacherController::class, 'updateStatus']);
+    Route::delete('user-teacher/{id}/delete', [UserTeacherController::class, 'teacherDelete']);
     Route::get('teacher/search', [UserTeacherController::class, 'search']);
 
     Route::post('add-new-student', [UserStudentController::class, 'create']);
@@ -46,12 +54,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('all-students', [UserStudentController::class, 'showStudents']);
     Route::post('user-student/{id}/update', [UserStudentController::class, 'update']);
     Route::post('user-student/{id}/status-update', [UserStudentController::class, 'updateStatus']);
+    Route::delete('user-student/{id}/delete', [UserStudentController::class, 'studentDelete']);
     Route::get('student/search', [UserStudentController::class, 'search']);
 
     Route::post('add-new-parent', [UserParentController::class, 'create']);
     Route::get('all-parents', [UserParentController::class, 'showParents']);
     Route::post('user-parent/{id}/update', [UserParentController::class, 'update']);
     Route::post('user-parent/{id}/status-update', [UserParentController::class, 'updateStatus']);
+    Route::delete('user-parent/{id}/delete', [UserParentController::class, 'parentDelete']);
     Route::get('parent/search', [UserParentController::class, 'search']);
 
     Route::post('add-new-user-role', [UserRoleController::class, 'store']);
@@ -73,7 +83,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('user-access/{id}/delete', [UserAccessController::class, 'destroy']);
 
     Route::post('subject-create', [SubjectController::class, 'store']);
-    Route::get('subjects', [SubjectController::class, 'index']);
     Route::get('subject/{id}/show', [SubjectController::class, 'show']);
     Route::post('subject/{id}/update', [SubjectController::class, 'update']);
     Route::delete('subject/{id}/delete', [SubjectController::class, 'destroy']);
@@ -123,10 +132,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('parent-report-data/{studentAdmissionNo}/{start_date}/{end_date}/{exam}/{month}/{student_grade}/{student_class}', [MarksController::class, 'parentReportData']);
 
     Route::get('class-students/{year}/{grade}/{class}', [UserStudentController::class, 'searchStudents']);
+    Route::get('students-dropdown/{grade}/{class}', [UserStudentController::class, 'searchClassStudents']);
     Route::get('grade-students/{year}/{grade}/{class}', [UserStudentController::class, 'searchGradeStudents']);
     Route::post('students-grade-update', [UserStudentController::class, 'updateStudentsGrade']);
 
+    Route::get('marks-status/{studentYear}/{grade}/{examYear}/{exam}/{month}', [MarksController::class, 'checkMarksStatus']);
 
 
-    Route::post('abc', [UserStudentController::class, 'updateStudentsGrade']);
 });

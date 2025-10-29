@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->enum('userRole', ['admin', 'user', 'managementStaff', 'userStudent', 'userParent', 'userTeacher', 'userClassTeacher'])->default('user')->nullable();
             $table->boolean('status')->default(false)->nullable();
+            $table->string('otp')->nullable();
             $table->timestamps();
         });
 

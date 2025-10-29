@@ -32,6 +32,7 @@ class User extends Authenticatable
         'photo',
         'userRole',
         'status',
+        'otp',
     ];
 
     protected $casts = [

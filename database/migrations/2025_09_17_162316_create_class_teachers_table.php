@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('class_teachers', function (Blueprint $table) {
             $table->id();
-            $table->string('grade')->nullable();
-            $table->string('class')->nullable();
-            $table->string('classTeacher')->nullable();
+            $table->string('teacherGrade')->nullable();
+            $table->string('teacherClass')->nullable();
+            $table->string('name')->nullable();
+            $table->string('staffNo')->nullable();
             $table->timestamps();
         });
     }
