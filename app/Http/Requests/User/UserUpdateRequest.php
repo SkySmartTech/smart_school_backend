@@ -26,7 +26,7 @@ class UserUpdateRequest extends FormRequest
             'email'         => 'nullable|string|email|max:255',
             'address'       => 'nullable|string|max:255',
             'birthDay'      => 'nullable|date',
-            'contact'       => 'nullable|string|max:255',
+            'contact'       => 'nullable|string|min:10|max:10',
             'medium'        => 'nullable|string|max:255',
             'gender'        => 'nullable|string|max:255',
             'photo'         => 'nullable|string|max:255',

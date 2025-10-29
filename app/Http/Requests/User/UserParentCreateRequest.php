@@ -26,7 +26,7 @@ class UserParentCreateRequest extends FormRequest
             'address' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
             'birthDay' => 'nullable|date',
-            'contact' => 'nullable|string|max:15',
+            'contact' => 'nullable|string|min:10|max:10',
             'userType' => 'required|string|max:255',
             'gender' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
@@ -35,10 +35,12 @@ class UserParentCreateRequest extends FormRequest
             'photo' => 'nullable|string|max:255',
             'userRole' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
-            'studentAdmissionNo' => 'nullable|string|max:255',
-            'parentContact' => 'nullable|string|max:15',
-            'profession' => 'nullable|string|max:255',
-            'relation' => 'nullable|string|max:255'
+
+            'parentData'           => 'required|array',
+            'parentData.*.studentAdmissionNo'  => 'nullable|string|min:5|max:10',
+            'parentData.*.parentContact'  => 'nullable|string|min:10|max:10',
+            'parentData.*.profession'       => 'nullable|string|max:255',
+            'parentData.*.relation'        => 'nullable|string|max:255',
         ];
     }
 }

@@ -54,12 +54,41 @@ class UserController extends Controller
 
         $access = DB::table('user_accesses')
                     ->where('userType', $role)
-                    ->pluck('permissionObject');
+                    ->pluck('permissionObject')
+                    ->map(function ($item) {
+                        return json_decode($item, true);
+                    });
 
         switch (strtolower($user->userType)) {
             case 'teacher':
-                $teacherData = $user->teacher;
-                $userData['teacher_data'] = $teacherData ? $teacherData->toArray() : [];
+                $teacherDataList = $user->teacher; // Collection of teacher records
+
+                if ($teacherDataList->isNotEmpty()) {
+                    // ✅ Collect all teacher_info data
+                    $teacherInfoList = $teacherDataList->map(function ($teacher) {
+                        return $teacher->toArray();
+                    });
+
+                    // ✅ Only one class teacher record (based on staffNo)
+                    $classTeacherData = null;
+
+                    if ($user->userRole === 'userClassTeacher') {
+                        $classTeacherData = DB::table('class_teachers')
+                            ->where('staffNo', $teacherDataList->first()->staffNo)
+                            ->first();
+                    }
+
+                    // ✅ Combine both teacher list + class teacher info
+                    $userData['teacher_data'] = [
+                        'teacher_info' => $teacherInfoList,
+                        'class_teacher_info' => $classTeacherData ? (array) $classTeacherData : null,
+                    ];
+                } else {
+                    $userData['teacher_data'] = [
+                        'teacher_info' => [],
+                        'class_teacher_info' => null,
+                    ];
+                }
                 break;
 
             case 'student':
@@ -68,17 +97,27 @@ class UserController extends Controller
                 break;
 
             case 'parent':
-                $parentData = $user->parent()->with('student.user')->first();
+                $parentRecords = $user->parent()->with('students.user')->get();
 
-                if ($parentData && $parentData->student) {
-                    $userData['parent_data'] = [
-                        'parent_info' => $parentData,
-                        'student_info' => [
-                            'name'  => $parentData->student->user->name ?? null, // if linked to User
-                            'grade' => $parentData->student->studentGrade,
-                            'class' => $parentData->student->studentClass,
-                        ]
-                    ];
+                if ($parentRecords->isNotEmpty()) {
+                    $userData['parent_data'] = $parentRecords->map(function ($parentRecord) {
+                        return [
+                            'parent_info' => [
+                                'id' => $parentRecord->id,
+                                'profession' => $parentRecord->profession,
+                                'relation' => $parentRecord->relation,
+                                'parent_contact' => $parentRecord->parentContact,
+                            ],
+                            'students_info' => $parentRecord->students->map(function ($student) {
+                                return [
+                                    'name' => $student->user->name ?? null,
+                                    'studentAdmissionNo' => $student->studentAdmissionNo,
+                                    'grade' => $student->studentGrade,
+                                    'class' => $student->studentClass,
+                                ];
+                            }),
+                        ];
+                    });
                 } else {
                     $userData['parent_data'] = null;
                 }
@@ -121,6 +160,12 @@ class UserController extends Controller
     {
         $users = $this->userInterface->all();
         return response()->json($users, 200);
+    }
+
+    public function destroy(string $id)
+    {
+        $this->userInterface->deleteById($id);
+        return response()->json();
     }
 
     public function profileUpdate(Request $request, $id)
@@ -199,6 +244,6 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        
+
     }
 }

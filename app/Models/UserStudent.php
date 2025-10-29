@@ -25,7 +25,7 @@ class UserStudent extends Model
 
     public function parent()
     {
-        return $this->hasOne(UserParent::class, 'studentAdmissionNo', 'studentAdmissionNo');
+        return $this->belongsTo(UserParent::class, 'studentAdmissionNo', 'studentAdmissionNo');
     }
 
     public function user()

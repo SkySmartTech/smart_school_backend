@@ -36,4 +36,9 @@ class UserStudentRepository extends BaseRepository implements UserStudentInterfa
                 ->orWhere('medium', 'like', "%{$keyword}%")
                 ->get();
     }
+
+    public function deleteByUserId($userId)
+    {
+        return UserStudent::where('userId', $userId)->delete();
+    }
 }

@@ -31,14 +31,11 @@ class UserParentController extends Controller
         Request $request,
         UserParentRegisterRequest $ParentRequest)
     {
-        $userId = $request->header('userId');
-        $userType = $request->header('userType');
-
         $validated = $ParentRequest->validated();
-        $validated['userId'] = $userId;
-        $validated['userType'] = $userType;
 
-        $this->userParentInterface->create($validated);
+        foreach ($validated['parentData'] as $parent) {
+            $this->userParentInterface->create($parent);
+        }
 
         return response()->json([
             'message' => 'User Parent registered successfully!',
@@ -77,20 +74,26 @@ class UserParentController extends Controller
 
         $user = $this->userInterface->create($userData);
 
-        $parentData = [
-            'userId'        => $user->id,
-            'userType'      => $user->userType,
-            'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
-            'parentContact' => $validatedData['parentContact'],
-            'profession'  => $validatedData['profession'],
-            'relation'      => $validatedData['relation'],
-        ];
+        if (!empty($validatedData['parentData'])) {
+            foreach ($validatedData['parentData'] as $parent) {
+                $parent['userId']     = $user->id;
+                $parent['userType']   = $user->userType;
+                $parent['modifiedBy'] = Auth::user()->name;
 
-        $this->userParentInterface->create($parentData);
+                $this->userParentInterface->create($parent);
+            }
+        }
 
         return response()->json([
             'message' => 'New parent added successfully!',
         ], 201);
+    }
+
+    public function parentDelete($id)
+    {
+        $this->userInterface->deleteById($id);
+        $this->userParentInterface->deleteByUserId($id);
+        return response()->json();
     }
 
     public function update(UserParentUpdateRequest $request, string $id)
@@ -114,17 +117,17 @@ class UserParentController extends Controller
 
         $this->userInterface->update($id, $userData);
 
+        $this->userParentInterface->deleteByUserId($id);
 
-        $parentData = [
-            'userType'      => $validatedData['userType'],
-            'studentAdmissionNo' => $validatedData['studentAdmissionNo'],
-            'parentContact' => $validatedData['parentContact'],
-            'profession'  => $validatedData['profession'],
-            'relation'      => $validatedData['relation'],
-            'modifiedBy'    => Auth::user()->name,
-        ];
+        if (!empty($validatedData['parentData'])) {
+            foreach ($validatedData['parentData'] as $parent) {
+                $parent['userId']     = $id;
+                $parent['userType']   = $userData['userType'];
+                $parent['modifiedBy'] = Auth::user()->name;
 
-        $this->userParentInterface->updateByUserId($id, $parentData);
+                $this->userParentInterface->create($parent);
+            }
+        }
 
         return response()->json([
             'message' => 'User Parent updated successfully!',

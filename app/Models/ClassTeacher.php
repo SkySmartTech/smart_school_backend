@@ -10,8 +10,14 @@ class ClassTeacher extends Model
     use HasFactory;
 
     protected $fillable = [
-        'grade',
-        'class',
-        'classTeacher',
+        'teacherGrade',
+        'teacherClass',
+        'name',
+        'staffNo',
     ];
+
+    public function userTeacher()
+    {
+        return $this->belongsTo(UserTeacher::class, 'staffNo', 'staffNo');
+    }
 }

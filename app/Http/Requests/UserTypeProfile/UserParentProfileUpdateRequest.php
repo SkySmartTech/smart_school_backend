@@ -22,7 +22,7 @@ class UserParentProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'studentAdmissionNo' => 'nullable|string|max:255',
+            'studentAdmissionNo' => 'nullable|string|min:5|max:10',
             'profession' => 'nullable|string|max:255',
             'relation' => 'nullable|string|max:255'
         ];

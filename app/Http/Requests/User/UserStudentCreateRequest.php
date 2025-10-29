@@ -26,7 +26,7 @@ class UserStudentCreateRequest extends FormRequest
             'address' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
             'birthDay' => 'nullable|date',
-            'contact' => 'nullable|string|max:15',
+            'contact' => 'nullable|string|min:10|max:10',
             'userType' => 'required|string|max:255',
             'gender' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
@@ -38,7 +38,7 @@ class UserStudentCreateRequest extends FormRequest
             'studentGrade' => 'required|string|max:255',
             'medium' => 'nullable|string|max:255',
             'studentClass' => 'nullable|string|max:255',
-            'studentAdmissionNo' => 'nullable|string|max:255',
+            'studentAdmissionNo' => 'nullable|string|min:5|max:10',
         ];
     }
 }
