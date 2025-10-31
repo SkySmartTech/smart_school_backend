@@ -23,7 +23,7 @@ class UserStudentRegisterRequest extends FormRequest
     {
         return [
             'studentGrade' => 'nullable|string|max:255',
-            'studentAdmissionNo' => 'nullable|string|min:5|max:8',
+            'studentAdmissionNo' => 'nullable|string|min:5|max:8|unique:user_students,studentAdmissionNo',
             'studentClass' => 'nullable|string|max:255',
             'medium' => 'nullable|string|max:255',
         ];

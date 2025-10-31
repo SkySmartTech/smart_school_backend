@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('user-teacher/{id}/status-update', [UserTeacherController::class, 'updateStatus']);
     Route::delete('user-teacher/{id}/delete', [UserTeacherController::class, 'teacherDelete']);
     Route::get('teacher/search', [UserTeacherController::class, 'search']);
+    Route::post('user-teacher/{id}/activate', [UserTeacherController::class, 'activateStatus']);
 
     Route::post('add-new-student', [UserStudentController::class, 'create']);
     Route::post('add-new-students', [UserStudentController::class, 'multiCreate']);
@@ -56,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('user-student/{id}/status-update', [UserStudentController::class, 'updateStatus']);
     Route::delete('user-student/{id}/delete', [UserStudentController::class, 'studentDelete']);
     Route::get('student/search', [UserStudentController::class, 'search']);
+    Route::post('user-student/{id}/activate', [UserStudentController::class, 'activateStatus']);
 
     Route::post('add-new-parent', [UserParentController::class, 'create']);
     Route::get('all-parents', [UserParentController::class, 'showParents']);
@@ -63,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('user-parent/{id}/status-update', [UserParentController::class, 'updateStatus']);
     Route::delete('user-parent/{id}/delete', [UserParentController::class, 'parentDelete']);
     Route::get('parent/search', [UserParentController::class, 'search']);
+    Route::post('user-parent/{id}/activate', [UserParentController::class, 'activateStatus']);
 
     Route::post('add-new-user-role', [UserRoleController::class, 'store']);
     Route::get('user-roles', [UserRoleController::class, 'index']);

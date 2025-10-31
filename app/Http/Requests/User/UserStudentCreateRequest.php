@@ -38,7 +38,7 @@ class UserStudentCreateRequest extends FormRequest
             'studentGrade' => 'required|string|max:255',
             'medium' => 'nullable|string|max:255',
             'studentClass' => 'nullable|string|max:255',
-            'studentAdmissionNo' => 'nullable|string|min:5|max:10',
+            'studentAdmissionNo' => 'nullable|string|min:5|max:10|unique:user_students,studentAdmissionNo',
         ];
     }
 }

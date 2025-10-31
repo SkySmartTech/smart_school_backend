@@ -39,7 +39,7 @@ class StudentMultiCreateRequest extends FormRequest
             'studentData.*.studentGrade'        => 'nullable|string|max:255',
             'studentData.*.studentClass'        => 'nullable|string|max:255',
             'studentData.*.medium'              => 'nullable|string|max:255',
-            'studentData.*.studentAdmissionNo'  => 'nullable|string|min:5|max:10',
+            'studentData.*.studentAdmissionNo'  => 'nullable|string|min:5|max:10|unique:user_students,studentAdmissionNo',
         ];
     }
 }

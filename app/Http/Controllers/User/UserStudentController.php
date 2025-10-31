@@ -126,7 +126,11 @@ class UserStudentController extends Controller
             'status'    => $validatedData['status'],
         ];
 
-        // Update user
+        if (!empty($validatedData['password']) && $validatedData['password'] !== '********') {
+            $userData['password'] = Hash::make($validatedData['password']);
+        }
+
+
         $this->userInterface->update($id, $userData);
 
         $studentData = [
@@ -167,6 +171,18 @@ class UserStudentController extends Controller
 
         return response()->json([
             'message' => 'User deactivated successfully.',
+        ]);
+    }
+
+    public function activateStatus($id)
+    {
+        $user = $this->userInterface->findById($id);
+
+        $user->status = true;
+        $user->save();
+
+        return response()->json([
+            'message' => 'User activated successfully.',
         ]);
     }
 

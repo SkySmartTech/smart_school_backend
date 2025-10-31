@@ -23,7 +23,7 @@ class UserParentRegisterRequest extends FormRequest
     {
         return [
             'parentData'           => 'required|array',
-            'parentData.*.studentAdmissionNo'  => 'nullable|string|min:5|max:8',
+            'parentData.*.studentAdmissionNo'  => 'nullable|string|min:5|max:8|unique:user_parents,studentAdmissionNo',
             'parentData.*.parentContact'  => 'nullable|string|min:10|max:10',
             'parentData.*.profession'       => 'nullable|string|max:255',
             'parentData.*.relation'        => 'nullable|string|max:255',

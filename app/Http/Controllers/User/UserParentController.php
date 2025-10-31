@@ -115,6 +115,10 @@ class UserParentController extends Controller
             'status'    => $validatedData['status'] ?? null,
         ];
 
+        if (!empty($validatedData['password']) && $validatedData['password'] !== '********') {
+            $userData['password'] = Hash::make($validatedData['password']);
+        }
+
         $this->userInterface->update($id, $userData);
 
         $this->userParentInterface->deleteByUserId($id);
@@ -143,6 +147,18 @@ class UserParentController extends Controller
 
         return response()->json([
             'message' => 'User deactivated successfully.',
+        ]);
+    }
+
+    public function activateStatus($id)
+    {
+        $user = $this->userInterface->findById($id);
+
+        $user->status = true;
+        $user->save();
+
+        return response()->json([
+            'message' => 'User activated successfully.',
         ]);
     }
 

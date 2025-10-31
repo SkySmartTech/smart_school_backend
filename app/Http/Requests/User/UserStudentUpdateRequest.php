@@ -31,6 +31,7 @@ class UserStudentUpdateRequest extends FormRequest
             'gender' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             'username' => 'required|string|max:255',
+            'password' => 'required|string|min:8',
             'photo' => 'nullable|string|max:255',
             'userRole' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
